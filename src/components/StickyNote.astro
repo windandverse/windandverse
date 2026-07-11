@@ -1,0 +1,128 @@
+---
+interface Props {
+    id: string;
+}
+const { id } = Astro.props;
+---
+
+<div class="sticky-note-wrap" data-id={id}>
+    <div class="sticky-note">
+        <div class="sticky-note-top" aria-hidden="true"></div>
+        <label class="sticky-note-label" for={`note-${id}`}>leave a thought</label>
+        <textarea
+            id={`note-${id}`}
+            class="sticky-note-area"
+            placeholder="What did this make you think of?"
+            maxlength="400"
+            rows="4"
+            aria-label="Your personal note on this poem"
+        ></textarea>
+        <div class="sticky-note-footer">
+            <span class="sticky-note-count">0 / 400</span>
+            <div class="sticky-note-actions">
+                <button class="sticky-note-clear" type="button" aria-label="Clear note">clear</button>
+                <button class="sticky-note-send" type="button" aria-label="Send note to author">send</button>
+                <button class="sticky-note-update" type="button" aria-label="Update sent note" style="display:none">update</button>
+            </div>
+        </div>
+        <p class="sticky-note-status" aria-live="polite"></p>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll<HTMLElement>('.sticky-note-wrap').forEach(wrap => {
+        const id        = wrap.dataset.id!;
+        const key       = `sticky:${id}`;
+        const sentKey   = `sticky-sent:${id}`;
+        const textarea  = wrap.querySelector<HTMLTextAreaElement>('.sticky-note-area')!;
+        const count     = wrap.querySelector<HTMLElement>('.sticky-note-count')!;
+        const clearBtn  = wrap.querySelector<HTMLButtonElement>('.sticky-note-clear')!;
+        const sendBtn   = wrap.querySelector<HTMLButtonElement>('.sticky-note-send')!;
+        const updateBtn = wrap.querySelector<HTMLButtonElement>('.sticky-note-update')!;
+        const status    = wrap.querySelector<HTMLElement>('.sticky-note-status')!;
+
+        const poemTitle = document.querySelector<HTMLElement>('#poem-title')?.textContent ?? id;
+        const poemUrl   = window.location.href;
+
+        // Restore saved note
+        const saved = localStorage.getItem(key);
+        if (saved) {
+            textarea.value = saved;
+            count.textContent = `${saved.length} / 400`;
+        }
+
+        // If already sent, show update button instead of send
+        if (localStorage.getItem(sentKey) === 'true') {
+            sendBtn.style.display = 'none';
+            updateBtn.style.display = 'inline-block';
+            status.textContent = 'Sent.';
+        }
+
+        textarea.addEventListener('input', () => {
+            localStorage.setItem(key, textarea.value);
+            count.textContent = `${textarea.value.length} / 400`;
+            // If they edit after sending, show update button
+            if (localStorage.getItem(sentKey) === 'true') {
+                status.textContent = 'Edited — hit update to resend.';
+            } else {
+                status.textContent = '';
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            textarea.value = '';
+            localStorage.removeItem(key);
+            localStorage.removeItem(sentKey);
+            count.textContent = '0 / 400';
+            status.textContent = '';
+            sendBtn.style.display = 'inline-block';
+            updateBtn.style.display = 'none';
+            textarea.focus();
+        });
+
+        async function submitNote(isUpdate: boolean) {
+            const note = textarea.value.trim();
+            if (!note) {
+                status.textContent = 'Write something first.';
+                return;
+            }
+
+            const activeBtn = isUpdate ? updateBtn : sendBtn;
+            activeBtn.disabled = true;
+            activeBtn.textContent = isUpdate ? 'updating...' : 'sending...';
+            status.textContent = '';
+
+            try {
+                const res = await fetch('/api/sticky-note', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        note,
+                        poemTitle: isUpdate ? `[UPDATE] ${poemTitle}` : poemTitle,
+                        poemUrl,
+                    }),
+                });
+
+                if (res.ok) {
+                    localStorage.setItem(sentKey, 'true');
+                    status.textContent = isUpdate ? 'Updated. Thank you.' : 'Sent. Thank you.';
+                    sendBtn.style.display = 'none';
+                    updateBtn.style.display = 'inline-block';
+                    activeBtn.disabled = false;
+                    activeBtn.textContent = isUpdate ? 'update' : 'send';
+                } else {
+                    status.textContent = 'Something went wrong. Try again.';
+                    activeBtn.disabled = false;
+                    activeBtn.textContent = isUpdate ? 'update' : 'send';
+                }
+            } catch {
+                status.textContent = 'Could not send. Check your connection.';
+                activeBtn.disabled = false;
+                activeBtn.textContent = isUpdate ? 'update' : 'send';
+            }
+        }
+
+        sendBtn.addEventListener('click', () => submitNote(false));
+        updateBtn.addEventListener('click', () => submitNote(true));
+    });
+</script>

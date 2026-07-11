@@ -1,0 +1,82 @@
+---
+interface Props {
+    id: string;
+}
+const { id } = Astro.props;
+
+const reactions = [
+    { emoji: '💔', label: 'Felt this' },
+    { emoji: '✨', label: 'Beautiful' },
+    { emoji: '🌊', label: 'Deep' },
+    { emoji: '🔥', label: 'Powerful' },
+    { emoji: '🤍', label: 'Peaceful' },
+];
+---
+
+<div class="emoji-reactions" data-id={id}>
+    <p class="emoji-reactions-label">How did this make you feel?</p>
+    <div class="emoji-reactions-row">
+        {reactions.map(r => (
+            <button
+                class="emoji-btn"
+                data-emoji={r.emoji}
+                aria-label={r.label}
+                aria-pressed="false"
+                title={r.label}
+            >
+                <span class="emoji-symbol">{r.emoji}</span>
+                <span class="emoji-name">{r.label}</span>
+            </button>
+        ))}
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll<HTMLElement>('.emoji-reactions').forEach(wrap => {
+        const id         = wrap.dataset.id!;
+        const poemTitle  = document.querySelector<HTMLElement>('#poem-title')?.textContent ?? id;
+        const poemUrl    = window.location.href;
+
+        wrap.querySelectorAll<HTMLButtonElement>('.emoji-btn').forEach(btn => {
+            const emoji = btn.dataset.emoji!;
+            const label = btn.querySelector<HTMLElement>('.emoji-name')?.textContent ?? emoji;
+            const key   = `emoji:${id}:${emoji}`;
+
+            // Restore saved state
+            if (localStorage.getItem(key) === 'true') {
+                btn.classList.add('active');
+                btn.setAttribute('aria-pressed', 'true');
+            }
+
+            btn.addEventListener('click', async () => {
+                const isActive = btn.classList.contains('active');
+
+                if (isActive) {
+                    btn.classList.remove('active');
+                    btn.setAttribute('aria-pressed', 'false');
+                    localStorage.removeItem(key);
+                } else {
+                    btn.classList.add('active');
+                    btn.setAttribute('aria-pressed', 'true');
+                    localStorage.setItem(key, 'true');
+                    btn.classList.add('pop');
+                    setTimeout(() => btn.classList.remove('pop'), 350);
+
+                    // Notify via Resend
+                    try {
+                        await fetch('/api/like-notification', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                contentTitle: `${poemTitle} — ${label} ${emoji}`,
+                                contentType: 'poem',
+                                contentUrl: poemUrl,
+                            }),
+                        });
+                    } catch {
+                    }
+                }
+            });
+        });
+    });
+</script>

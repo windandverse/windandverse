@@ -1,0 +1,90 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ReactionButton from '../../components/ReactionButton.astro';
+import CommentSection from '../../components/CommentSection.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.id.replace(/\.[^/.]+$/, "") },
+    props: {
+      post,
+      related: posts.filter(p => p.id !== post.id).slice(0, 2),
+    },
+  }));
+}
+
+const { post, related } = Astro.props;
+const { title, pubDate, category, excerpt, image, alt, imageCredit } = post.data;
+const { Content } = await render(post);
+
+const ogImage = image?.src ?? '/social/og-blog.png';
+---
+
+<BaseLayout title={title} description={excerpt} ogImage={ogImage}>
+    <main class="blog-fullscreen" id="blog-container" data-blog-title={title} data-blog-excerpt={excerpt}>
+        <article>
+            <div class="blog-meta-header">
+                <div class="blog-meta-left">
+                    <span class="blog-date-full">{pubDate ? new Date(pubDate).toLocaleDateString() : ''}</span>
+                    {category && <span class="blog-category-full"> • {category}</span>}
+                </div>
+                <button class="blog-meta-share-btn poem-icon-btn share-btn" aria-label="Share">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="18" cy="5" r="3"></circle>
+                        <circle cx="6" cy="12" r="3"></circle>
+                        <circle cx="18" cy="19" r="3"></circle>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <h1>{title}</h1>
+
+            {image && (
+                <div class="featured-image">
+                    <Image src={image} alt={alt || title} width="1600" height="800" format="webp" style="width: 100%; height: auto; display: block; border-radius: 12px;" />
+                    {imageCredit && <p class="image-caption" set:html={imageCredit} />}
+                </div>
+            )}
+
+            <div class="blog-content-full">
+                <Content />
+            </div>
+
+            <ReactionButton id={`blog-${post.id}`} />
+        </article>
+
+        <CommentSection pageId={`blog-${post.id}`} pageTitle={title} />
+
+        {related.length > 0 && (
+            <section class="related-section">
+                <div class="related-header">
+                    <h3>More to read</h3>
+                    <div class="related-rule" aria-hidden="true"></div>
+                </div>
+                <div class="related-grid">
+                    {related.map(item => (
+                        <a href={`/blog/${item.id.replace(/\.[^/.]+$/, '')}`} class="related-card">
+                            {item.data.image && (
+                                <Image src={item.data.image} alt={item.data.alt || item.data.title} class="related-image" loading="lazy" />
+                            )}
+                            <div class="related-card-text related-card-text--blog">
+                                <span class="related-card-category">Blog</span>
+                                <span class="related-card-title">{item.data.title}</span>
+                                {item.data.excerpt && (
+                                    <p class="related-card-excerpt">{item.data.excerpt}</p>
+                                )}
+                            </div>
+                        </a>
+                    ))}
+                </div>
+            </section>
+        )}
+    </main>
+
+    <a href="/blog" class="back-to-blog">&#8592; all blogs</a>
+</BaseLayout>

@@ -1,0 +1,110 @@
+---
+// src/pages/about.astro
+import { Image } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import myPhoto from '../assets/about/my_photo.png';
+---
+
+<BaseLayout title="About Romeon">
+    <main class="about-page">
+
+        <!-- ── OPENING BANNER ── -->
+        <div class="writer-banner">
+            <div class="writer-photo">
+                <Image src={myPhoto} alt="Romeon" />
+            </div>
+            <span class="writer-banner-label">The Writer</span>
+            <h1>Roméon</h1>
+            <p class="writer-banner-sub">Poet. Storyteller. Student of a life that refuses to sit still. This is the archive of someone trying to understand themselves through words.</p>
+        </div>
+
+        <!-- PULL QUOTE -->
+        <div class="about-pull-quote">
+            <blockquote>The jornal of my becoming</blockquote>
+            <cite>— Roméon, Wind &amp; Verse</cite>
+        </div>
+
+        <!-- CHAPTER ONE: Origin -->
+        <div class="about-chapter">
+            <div class="about-chapter-number">01</div>
+            <div class="about-chapter-body">
+                <span class="about-chapter-label">Origin</span>
+                <h2 class="about-chapter-title">The name came before the person</h2>
+                <p>I, like every cliché, was afraid of exploring writing. There is so many good work out there and the whole world going digital can discourage right about anyone. But when you try to go against your natural instict you are left with the biggest what if of your life. I refuse to live in the shadow of a life unlived. Then when I took that first step every other step seemed to fall in place.</p>
+                <p>I do want to be a travel jornalist someday. But that all started when I got into writing. The ability of words to teleport you different places, emotional, physically and mentally is an ability I would like to better. I started from a place of fear, always thinking what will people say? But now I realise I have the power to shape opinions instead. Even if you are afraid of everything else, don't be afraid to dream.</p>
+            </div>
+        </div>
+
+        <!-- STATS STRIP -->
+        <div class="about-stats">
+            <div class="about-stat">
+                <span class="about-stat-value">Witty</span>
+                <span class="about-stat-label">Poems</span>
+            </div>
+            <div class="about-stat">
+                <span class="about-stat-value">Amazing</span>
+                <span class="about-stat-label">Stories</span>
+            </div>
+            <div class="about-stat">
+                <span class="about-stat-value">&infin;</span>
+                <span class="about-stat-label">Things to say</span>
+            </div>
+            <div class="about-stat">
+                <span class="about-stat-value">1</span>
+                <span class="about-stat-label">Good life</span>
+            </div>
+        </div>
+
+        <!-- CHAPTER TWO: The Writing -->
+        <div class="about-chapter">
+            <div class="about-chapter-number">02</div>
+            <div class="about-chapter-body">
+                <span class="about-chapter-label">The Writing</span>
+                <h2 class="about-chapter-title">I don't remember starting but I can't imagine stopping.</h2>
+                <p>I do not remember how I started writing. That's the honest truth. One day the ideas weren't anywhere and then suddenly they were everywhere. Too many to hold, too alive to ignore. The problem with being overly imaginative is that reality never quite keeps up. So I write to stay out of my mind (you know what I mean).</p>
+                <p>In writing I can do anything. A story can hold what a life cannot, every possibility, every version of a moment, every feeling that doesn't have a name yet. Wind &amp; Verse started because I needed somewhere to put all of it. It became something else entirely: a record. Proof that I was here, and that I was paying attention.</p>
+            </div>
+        </div>
+
+        <!-- PHILOSOPHY BLOCK -->
+        <div class="about-philosophy-block">
+            <span class="philosophy-word">The Philosophy</span>
+            <blockquote>Living is mortal, but life is not.</blockquote>
+            <p>Wind and verse are metaphors about life, the wind is always moving with nothing of its own. Verse, however, is immortalized in scripts telling tales that live longer. Together, wind and verse become a symbol that living is mortal but life is immortal and forever should be.</p>
+        </div>
+
+        <!-- CHAPTER THREE: The Philosophy of the Inner Child -->
+        <div class="about-chapter">
+            <div class="about-chapter-number">03</div>
+            <div class="about-chapter-body">
+                <span class="about-chapter-label">The Belief</span>
+                <h2 class="about-chapter-title">The inner child doesn't have to die</h2>
+                <p>My entire life I have felt like a reject and for the longest time I mistook that for being average. But I think what I actually was, was uncontained. I get distracted easily. I lose track of time reading things that don't matter and thinking about things that do. I imagine more than I execute, and then I execute things no one asked for.</p>
+                <p>I believe in the philosophy of the inner child. Not as a therapy buzzword but as a daily practice, the refusal to let wonder become embarrassing. The refusal to stop asking what if? I will not let mine die. Wind and Verse is, in a way, the most alive my inner child has ever been.</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER FOUR: What this place is -->
+        <div class="about-chapter">
+            <div class="about-chapter-number">04</div>
+            <div class="about-chapter-body">
+                <span class="about-chapter-label">This Place</span>
+                <h2 class="about-chapter-title">I don't know what Wind &amp; Verse is completely but that's the point</h2>
+                <p>If you came here expecting a neat description of what this site is about, I am sorry to disappoint. I refuse to be limited by a genre or a format. Some days it's poetry. Some days it's a story that's half-real and half-imagined. Some days it's a blog post trying to make sense of something that happened on a Tuesday.</p>
+                <p>What I can tell you is this: Wind and Verse is a harmony of mobility and immobility. Not everything needs to change. Not everything needs to stay. The page holds what the wind cannot and the wind keeps moving anyway. So I have the verse, be my wind. Tell a friend about this.</p>
+            </div>
+        </div>
+
+        <!-- CLOSING  -->
+        <div class="about-closing">
+            <p>If you don't know where to start — start where it hurts.<br>Or start where it's beautiful. Either works here.</p>
+            <div class="about-closing-links">
+                <a href="/poem" class="about-closing-link primary">Read the poems</a>
+                <a href="/stories" class="about-closing-link secondary">Read the stories</a>
+                <a href="/blog" class="about-closing-link secondary">Read the blogs</a>
+            </div>
+        </div>
+
+    </main>
+</BaseLayout>

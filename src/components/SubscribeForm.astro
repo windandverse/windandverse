@@ -1,0 +1,51 @@
+---
+const username = "YOUR_USERNAME";
+---
+
+<section class="subscribe-section">
+    <div class="subscribe-inner">
+        <p class="subscribe-eyebrow">Stay in the words</p>
+        <h2 class="subscribe-heading">A reminder that living is mortal but life is not.</h2>
+        <p class="subscribe-body">
+            No noise. Just a quiet note when something new is published.
+        </p>
+
+        <!-- Update this number as list grows -->
+        <p class="subscribe-social-proof">Join 50+ readers getting new words every week.</p>
+
+        <form
+            action={`https://buttondown.com/api/emails/embed-subscribe/${username}`}
+            method="post"
+            class="subscribe-form"
+            id="subscribe-form"
+        >
+            <div class="subscribe-field">
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="your@email.com"
+                    class="subscribe-input"
+                    required
+                />
+                <button type="submit" class="subscribe-btn" id="subscribe-btn">
+                    Subscribe
+                </button>
+            </div>
+            <p class="subscribe-note">No spam. Unsubscribe whenever.</p>
+        </form>
+
+        <p class="subscribe-success" id="subscribe-success">
+            You're in keep an eye on your inbox.
+        </p>
+    </div>
+</section>
+
+<script>
+    document.getElementById('subscribe-form')?.addEventListener('submit', () => {
+        const btn = document.getElementById('subscribe-btn') as HTMLButtonElement;
+        if (btn) {
+            btn.textContent = 'Subscribing...';
+            btn.disabled = true;
+        }
+    });
+</script>

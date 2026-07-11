@@ -1,0 +1,176 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EmojiReactions from '../../components/EmojiReactions.astro';
+import StickyNote from '../../components/StickyNote.astro';
+
+export async function getStaticPaths() {
+  const poems = await getCollection('poems');
+  const sortedPoems = poems.sort((a, b) => a.id.localeCompare(b.id));
+  
+  return sortedPoems.map((poem, index) => ({
+    params: { slug: poem.id },
+    props: { 
+        poem,
+        prevPoem: sortedPoems[index - 1] || null,
+        nextPoem: sortedPoems[index + 1] || null,
+        allPoems: sortedPoems,
+    },
+  }));
+}
+
+const { poem, prevPoem, nextPoem, allPoems } = Astro.props;
+const { Content } = await render(poem);
+---
+
+<BaseLayout title={poem.data.title} collectionType="POEMS" items={allPoems}>
+    <main class="poems-page">
+        <div class="poem-display" 
+             id="poem-container" 
+             data-poem-title={poem.data.title}
+             data-poem-id={poem.id}>
+             
+            <div id="poem-content">
+                <div class="poem-title-row">
+                    <h2 id="poem-title">{poem.data.title}</h2>
+                    <div class="poem-btn-group">
+                        <button class="poem-icon-btn share-btn" aria-label="Select lines to share">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                        </button>
+                        <button class="poem-icon-btn" id="poemExpandBtn" aria-label="Expand poem fullscreen">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <polyline points="9 21 3 21 3 15"></polyline>
+                                <line x1="21" y1="3" x2="14" y2="10"></line>
+                                <line x1="3" y1="21" x2="10" y2="14"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <span class="poem-selection-hint" id="poemSelectionHint">Tap any line to select it (max 8)</span>
+                
+                <div id="poem-body">
+                    <Content />
+                </div>
+
+                <EmojiReactions id={`poem-${poem.id}`} />
+                <StickyNote id={`poem-${poem.id}`} />
+            </div>
+            
+            <div class="poem-nav">
+                {prevPoem ? (
+                    <a href={`/poem/${prevPoem.id}`} class="nav-btn fullscreen-nav-link">Prev</a>
+                ) : (
+                    <span class="nav-btn disabled">Prev</span>
+                )}
+                {nextPoem ? (
+                    <a href={`/poem/${nextPoem.id}`} class="nav-btn fullscreen-nav-link">Next</a>
+                ) : (
+                    <span class="nav-btn disabled">Next</span>
+                )}
+            </div>
+        </div>
+    </main>
+
+    <div class="quote-select-bar" id="quoteSelectBar">
+        <span id="quoteSelectCount">0 lines selected</span>
+        <button class="quote-select-share" type="button" id="quoteSelectShareBtn">Share</button>
+        <button class="quote-select-cancel" type="button" id="quoteSelectCancelBtn">Cancel</button>
+    </div>
+</BaseLayout>
+
+<script is:inline>
+    const MAX_LINES = 8;
+
+    function handlePoemClick(e) {
+        if (e.target.closest('#poemExpandBtn')) {
+            e.preventDefault();
+            if (typeof window.toggleFullScreen === 'function') window.toggleFullScreen();
+            return;
+        }
+
+        const shareBtn = e.target.closest('.share-btn');
+        if (shareBtn) {
+            e.preventDefault();
+            const body = document.getElementById('poem-body');
+            const turningOn = !body.classList.contains('selecting');
+            if (turningOn) {
+                body.classList.add('selecting');
+                shareBtn.classList.add('active');
+                document.getElementById('poemSelectionHint').classList.add('visible');
+            } else {
+                body.classList.remove('selecting');
+                shareBtn.classList.remove('active');
+                document.querySelectorAll('.line-selected').forEach(el => el.classList.remove('line-selected'));
+                document.getElementById('quoteSelectBar').classList.remove('visible');
+                document.getElementById('poemSelectionHint').classList.remove('visible');
+                const countSpan = document.getElementById('quoteSelectCount');
+                if (countSpan) countSpan.textContent = '0 lines selected';
+            }
+            return;
+        }
+
+        if (e.target.closest('#quoteSelectShareBtn')) {
+            e.preventDefault();
+            const selectedLines = Array.from(document.querySelectorAll('.line-selected')).map(el => el.textContent);
+            if (selectedLines.length > 0 && typeof window.openShareFlow === 'function') {
+                const poemContainer = document.getElementById('poem-container');
+                const poemTitle = document.getElementById('poem-title').textContent;
+                const paletteIndex = (poemContainer && typeof window.hashStringToIndex === 'function')
+                    ? window.hashStringToIndex(poemContainer.dataset.poemId, window.cardPalettesLength || 15)
+                    : 0;
+                window.openShareFlow({
+                    label: poemTitle,
+                    quoteLines: [poemTitle, ...selectedLines],
+                    paletteIndex,
+                    url: window.location.href
+                });
+            }
+            return;
+        }
+
+        if (e.target.closest('#quoteSelectCancelBtn')) {
+            e.preventDefault();
+            const body = document.getElementById('poem-body');
+            body.classList.remove('selecting');
+            const shareBtnEl = document.querySelector('.share-btn');
+            if (shareBtnEl) shareBtnEl.classList.remove('active');
+            document.querySelectorAll('.line-selected').forEach(el => el.classList.remove('line-selected'));
+            document.getElementById('quoteSelectBar').classList.remove('visible');
+            document.getElementById('poemSelectionHint').classList.remove('visible');
+            return;
+        }
+
+        // --- 5. SELECTING LINES ---
+        const body = document.getElementById('poem-body');
+        if (body && body.classList.contains('selecting')) {
+            const line = e.target.closest('.poem-line');
+            if (line && body.contains(line)) {
+                const alreadySelected = line.classList.contains('line-selected');
+                const currentCount = document.querySelectorAll('.line-selected').length;
+
+                // Block if at limit and trying to add a new line
+                if (!alreadySelected && currentCount >= MAX_LINES) {
+                    const countSpan = document.getElementById('quoteSelectCount');
+                    if (countSpan) countSpan.textContent = `Max ${MAX_LINES} lines reached`;
+                    return;
+                }
+
+                line.classList.toggle('line-selected');
+                const count = document.querySelectorAll('.line-selected').length;
+                const countSpan = document.getElementById('quoteSelectCount');
+                countSpan.textContent = count > 0 ? `${count} / ${MAX_LINES} lines selected` : '0 lines selected';
+                document.getElementById('quoteSelectBar').classList.add('visible');
+            }
+        }
+    }
+
+    document.removeEventListener('click', handlePoemClick);
+    document.addEventListener('click', handlePoemClick);
+</script>

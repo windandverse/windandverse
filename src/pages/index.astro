@@ -1,0 +1,127 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import SubscribeForm from '../components/SubscribeForm.astro';
+
+import slide1 from '../assets/home/stormy.png';
+import slide2 from '../assets/home/search.png';
+import slide3 from '../assets/home/play.png';
+import slide4 from '../assets/home/capture.png';
+import slide5 from '../assets/home/puzzle.png';
+import fallbackPoem from '../assets/home/linus-sandvide-5DIFvVwe6wk-unsplash.jpg';
+
+const [stories, poems, posts] = await Promise.all([
+    getCollection('stories'),
+    getCollection('poems'),
+    getCollection('blog'),
+]);
+
+// Latest 3 dated items from stories + blog, sorted by pubDate
+const datedItems = [
+    ...stories.map(s => ({
+        title: s.data.title,
+        category: 'Story',
+        href: `/stories/${s.id}`,
+        image: s.data.image ?? slide1,
+        pubDate: s.data.pubDate ? new Date(s.data.pubDate) : null,
+    })),
+    ...posts.map(b => ({
+        title: b.data.title,
+        category: 'Blog',
+        href: `/blog/${b.id.replace(/\.[^/.]+$/, '')}`,
+        image: b.data.image ?? slide1,
+        pubDate: b.data.pubDate ? new Date(b.data.pubDate) : null,
+    })),
+]
+    .filter(item => item.pubDate !== null)
+    .sort((a, b) => b.pubDate!.getTime() - a.pubDate!.getTime())
+    .slice(0, 3);
+
+// 1 poem, rotates every week — poems have no images so fallbackPoem is always used
+const weekNumber = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
+const poemIndex = poems.length ? weekNumber % poems.length : 0;
+const featuredPoem = poems[poemIndex] ? [{
+    title: poems[poemIndex].data.title,
+    category: 'Poem',
+    href: `/poem/${poems[poemIndex].id}`,
+    image: fallbackPoem,
+    pubDate: null,
+}] : [];
+
+const readingItems = [...datedItems, ...featuredPoem];
+
+const heroSlides = [
+    { src: slide2, alt: '' },
+    { src: slide3, alt: '' },
+    { src: slide1, alt: '' },
+    { src: slide4, alt: '' },
+    { src: slide5, alt: '' },
+];
+---
+
+<BaseLayout title="Home">
+    <main>
+        <!-- Layer 1: Text -->
+        <section class="text-layer">
+            <p class="text-eyebrow">A writer's Home</p>
+            <h1 class="text-headline">
+                Life is meant to be lived,<br/>
+                <em>not understood.</em>
+            </h1>
+            <div class="text-divider" aria-hidden="true"></div>
+            <p class="text-body">
+                Life is beautiful but it leaves us before we know the meaning of living.
+                I don't seek to understand life. I seek to capture the fleeting moments
+                of existence through words.
+            </p>
+        </section>
+
+        <!-- Layer 2: Slideshow -->
+        <div class="slideshow-layer">
+            {heroSlides.map((slide) => (
+                <Image src={slide.src} class="hero-slide" alt={slide.alt} loading="eager" />
+            ))}
+            <div class="slideshow-fade" aria-hidden="true"></div>
+        </div>
+
+        <!-- Reading list -->
+        <section class="reading-section">
+            <div class="reading-inner">
+                <div class="reading-header">
+                    <h2>Latest</h2>
+                    <div class="reading-rule" aria-hidden="true"></div>
+                </div>
+                <div class="reading-list">
+                    {readingItems.map((item) => (
+                        <a href={item.href} class="reading-entry">
+                            <Image src={item.image} alt="" class="entry-thumbnail" loading="lazy" />
+                            <div class="entry-text">
+                                <span class="entry-category">{item.category}</span>
+                                <span class="entry-title">{item.title}</span>
+                            </div>
+                            <span class="entry-arrow" aria-hidden="true">→</span>
+                        </a>
+                    ))}
+                </div>
+            </div>
+        </section>
+
+        <!-- Subscribe -->
+        <SubscribeForm />
+    </main>
+
+    <script>
+        (function () {
+            const slides = document.querySelectorAll<HTMLElement>('.hero-slide');
+            if (!slides.length) return;
+            let current = 0;
+            slides[current].classList.add('active');
+            setInterval(() => {
+                slides[current].classList.remove('active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('active');
+            }, 5000);
+        })();
+    </script>
+</BaseLayout>

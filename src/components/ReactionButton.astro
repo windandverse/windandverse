@@ -1,0 +1,71 @@
+---
+interface Props {
+    id: string;
+    contentTitle?: string;
+    contentType?: string;
+}
+const { id, contentTitle = '', contentType = 'post' } = Astro.props;
+---
+
+<div class="reaction-wrap" data-id={id} data-title={contentTitle} data-type={contentType}>
+    <button class="reaction-btn" aria-label="Like this piece" aria-pressed="false">
+        <svg class="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <span class="reaction-label">Like</span>
+    </button>
+</div>
+
+<script>
+    document.querySelectorAll<HTMLElement>('.reaction-wrap').forEach(wrap => {
+        const id           = wrap.dataset.id!;
+        const contentTitle = wrap.dataset.title ?? document.title;
+        const contentType  = wrap.dataset.type ?? 'post';
+        const btn          = wrap.querySelector('.reaction-btn') as HTMLButtonElement;
+        const label        = wrap.querySelector('.reaction-label') as HTMLSpanElement;
+        const key          = `reaction:${id}`;
+
+        // Restore saved state
+        if (localStorage.getItem(key) === 'true') {
+            btn.classList.add('liked');
+            btn.setAttribute('aria-pressed', 'true');
+            label.textContent = 'Liked';
+        }
+
+        btn.addEventListener('click', async () => {
+            const isLiked = btn.classList.contains('liked');
+
+            if (isLiked) {
+                // Unlike
+                btn.classList.remove('liked');
+                btn.setAttribute('aria-pressed', 'false');
+                label.textContent = 'Like';
+                localStorage.removeItem(key);
+            } else {
+                // Like
+                btn.classList.add('liked');
+                btn.setAttribute('aria-pressed', 'true');
+                label.textContent = 'Liked';
+                localStorage.setItem(key, 'true');
+
+                // Pulse animation
+                btn.classList.add('pulse');
+                setTimeout(() => btn.classList.remove('pulse'), 400);
+
+                // Notify via Resend
+                try {
+                    await fetch('/api/like-notification', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contentTitle,
+                            contentType,
+                            contentUrl: window.location.href,
+                        }),
+                    });
+                } catch {
+                }
+            }
+        });
+    });
+</script>

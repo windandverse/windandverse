@@ -1,0 +1,13 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "allowJs": true,
+    "moduleResolution": "node16",
+    "module": "node16",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "astro:content": ["./.astro/types.d.ts"]
+    }
+  }
+}

@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const allPosts = await getCollection('blog');
+
+const posts = allPosts.sort((a, b) => {
+    const dateA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0;
+    const dateB = b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0;
+    return dateB - dateA;
+});
+---
+
+<BaseLayout title="Blog - Wind & Verse" collectionType="BLOGS" items={posts}>
+    <main class="blogs-page">
+        <div class="blogs-list" id="blogs-list">
+            {posts.map((post: any) => (
+                <a href={`/blog/${post.id}`} class="blog-post">
+                    <div class="blog-meta">
+                        <span class="blog-date">{post.data.pubDate?.toLocaleDateString() || ''}</span>
+                        <span class="blog-category">{post.data.category || 'General'}</span>
+                    </div>
+                    <h2 class="blog-title">{post.data.title}</h2>
+                    <p class="blog-excerpt">{post.data.excerpt || post.data.description || ''}</p>
+                </a>
+            ))}
+        </div>
+    </main>
+</BaseLayout>

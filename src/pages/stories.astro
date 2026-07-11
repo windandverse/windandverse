@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+// 1. Fetch and sort stories
+const allStories = await getCollection('stories');
+const stories = allStories.sort((a, b) => {
+    const dateA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0;
+    const dateB = b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0;
+    return dateB - dateA;
+});
+---
+
+<BaseLayout title="Stories" collectionType="STORIES" items={stories}>
+    
+    <main class="stories-page">
+        <div class="stories-header" id="storiesHeader">
+            <h1>Stories</h1>
+            <p class="stories-subhead">My sorry attempt to prove pain can be beautiful&#128148;</p>
+        </div>
+        
+        <div class="stories-grid" id="stories-grid">
+            {stories.map((story: any) => {
+                const cleanSlug = story.id.replace(/\.[^/.]+$/, "");
+                const { title, intro, image, alt } = story.data;
+                return (
+                    <a href={`/stories/${cleanSlug}`} class="story-card">
+                        {image && (
+                            <div class="story-image">
+                                <Image src={image} alt={alt || title} class="story-card-image" />
+                            </div>
+                        )}
+                        <div class="story-content">
+                            <span class="story-title">{title}</span>
+                            <p class="story-intro">{intro}</p>
+                        </div>
+                    </a>
+                );
+            })}
+        </div>
+    </main>
+
+</BaseLayout>

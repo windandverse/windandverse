@@ -1,0 +1,155 @@
+/* ============================================
+   Wind & Verse — Custom Cusdis Theme
+   Loaded inside the Cusdis iframe via data-theme
+   ============================================ */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #2c2a28;
+    background: transparent;
+    font-size: 0.9rem;
+    line-height: 1.7;
+}
+
+/* ── INPUTS ── */
+textarea,
+input[type="text"],
+input[type="email"],
+input[type="url"] {
+    font-family: Georgia, serif !important;
+    border: 1px solid rgba(26, 24, 20, 0.2) !important;
+    border-radius: 10px !important;
+    padding: 12px 16px !important;
+    color: #1a1816 !important;
+    background: #faf8f5 !important;
+    font-size: 0.88rem !important;
+    width: 100% !important;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    resize: vertical;
+    outline: none !important;
+}
+
+textarea { min-height: 100px !important; }
+
+textarea:focus,
+input:focus {
+    border-color: #4a6fa5 !important;
+    box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.08) !important;
+    background: #fff !important;
+}
+
+textarea::placeholder,
+input::placeholder {
+    color: rgba(26, 24, 20, 0.35) !important;
+    font-style: italic;
+}
+
+/* ── BUTTONS ── */
+button {
+    font-family: Georgia, serif !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    border: none !important;
+}
+
+/* Submit button */
+button[type="submit"] {
+    background: #1a1816 !important;
+    color: #e0d5c0 !important;
+    border-radius: 40px !important;
+    padding: 10px 28px !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 0.06em !important;
+}
+
+button[type="submit"]:hover {
+    background: #4a6fa5 !important;
+    color: #fff !important;
+}
+
+/* Reply / secondary buttons */
+button:not([type="submit"]) {
+    background: transparent !important;
+    color: #4a6fa5 !important;
+    font-size: 0.78rem !important;
+    letter-spacing: 0.04em !important;
+    padding: 4px 0 !important;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+button:not([type="submit"]):hover {
+    color: #1a1816 !important;
+}
+
+/* ── LINKS ── */
+a {
+    color: #4a6fa5 !important;
+    text-decoration: none !important;
+    transition: color 0.2s;
+}
+a:hover { color: #1a1816 !important; }
+
+/* ── COMMENT LIST ── */
+/* Individual comment block */
+.comment,
+[class*="comment"] {
+    border-bottom: 1px solid rgba(26, 24, 20, 0.08) !important;
+    padding: 1.25rem 0 !important;
+    background: transparent !important;
+}
+
+/* Comment author name */
+.comment-author,
+[class*="author"],
+strong {
+    font-family: Georgia, serif !important;
+    color: #1a1816 !important;
+    font-weight: 600 !important;
+    font-size: 0.88rem !important;
+}
+
+/* Comment date/time */
+time,
+[class*="date"],
+[class*="time"] {
+    color: #8a7e6e !important;
+    font-size: 0.75rem !important;
+    font-style: italic !important;
+}
+
+/* Comment body text */
+.comment p,
+[class*="content"] p,
+p {
+    color: #3a3530 !important;
+    font-family: Georgia, serif !important;
+    font-size: 0.9rem !important;
+    line-height: 1.75 !important;
+    margin-top: 0.5rem !important;
+}
+
+/* ── HEADINGS ── */
+h1, h2, h3, h4 {
+    font-family: Georgia, serif !important;
+    color: #1a1816 !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.02em !important;
+}
+
+/* ── MISC ── */
+hr, [class*="divider"] {
+    border: none !important;
+    border-top: 1px solid rgba(26, 24, 20, 0.08) !important;
+    margin: 1rem 0 !important;
+}
+
+/* Login/powered-by text */
+small, [class*="powered"],
+[class*="footer"] {
+    color: #8a7e6e !important;
+    font-size: 0.72rem !important;
+    font-style: italic !important;
+}
