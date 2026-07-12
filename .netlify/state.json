@@ -1,5 +1,5 @@
 {
-	"dbConnectionString": "postgres://localhost:54388/postgres",
+	"dbConnectionString": "postgres://localhost:62863/postgres",
 	"geolocation": {
 		"data": {
 			"city": "Nairobi",
@@ -15,6 +15,6 @@
 			"latitude": -1.2841,
 			"longitude": 36.8155
 		},
-		"timestamp": 1783711972440
+		"timestamp": 1783845361482
 	}
 }

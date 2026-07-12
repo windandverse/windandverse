@@ -784,3 +784,108 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
 }
 .sticky-note-update:hover { background: #4a6fa5; color: #fff; }
 .sticky-note-update:disabled { opacity: 0.5; cursor: default; }
+
+/* ── COMMENT FORM ── */
+.comment-form { display: flex; flex-direction: column; gap: 12px; }
+.comment-fields { display: flex; flex-direction: column; gap: 10px; }
+.comment-input,
+.comment-textarea {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-size: 0.85rem;
+    color: #1a1814;
+    background: #faf8f5;
+    border: 1px solid rgba(26, 24, 20, 0.18);
+    border-radius: 10px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+    line-height: 1.65;
+}
+.comment-textarea { resize: vertical; min-height: 110px; font-style: italic; }
+.comment-input::placeholder,
+.comment-textarea::placeholder { color: rgba(26, 24, 20, 0.35); font-style: italic; }
+.comment-input:focus,
+.comment-textarea:focus {
+    border-color: #4a6fa5;
+    box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.08);
+    background: #fff;
+}
+.comment-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.comment-char-count {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-size: 0.62rem;
+    color: rgba(26, 24, 20, 0.38);
+}
+.comment-submit {
+    background: #1a1816;
+    border: none;
+    color: #e0d5c0;
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    padding: 10px 26px;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+}
+.comment-submit:hover { background: #4a6fa5; }
+.comment-submit:disabled { opacity: 0.5; cursor: default; }
+.comment-status {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-size: 0.72rem;
+    font-style: italic;
+    color: #7a9e7e;
+    min-height: 1rem;
+}
+
+/* ── QUOTE SLIDESHOW — 8 SECOND TIMING ── */
+/* The JS interval is in main.js — search for the quote slideshow setInterval
+   and change the millisecond value to 8000 */
+.quote-slide {
+    transition: opacity 1.5s ease-in-out;
+}
+
+/* ── WHITE COVER FIX ON MOBILE ── */
+/* The white flash/cover on blog and story pages on mobile is caused by
+   body background not covering fully or a pseudo-element interfering */
+body {
+    background-color: #1a1816; /* solid fallback so no white shows through */
+}
+body::before {
+    display: none; /* remove the pseudo overlay entirely */
+}
+
+/* Ensure blog/story pages have a solid background */
+.blog-fullscreen {
+    background: transparent;
+    position: relative;
+    z-index: 1;
+}
+
+/* ── HOME PAGE SECTIONS — SOLID BACKGROUNDS ── */
+/* Prevent site background from bleeding through home page layers */
+.text-layer {
+    background: #0c0b0a;
+    position: relative;
+    z-index: 1;
+}
+.slideshow-layer {
+    background: #0c0b0a;
+    position: relative;
+    z-index: 1;
+}
+.reading-section {
+    background: #0c0b0a;
+    position: relative;
+    z-index: 1;
+}
+.subscribe-section {
+    background: #0c0b0a;
+    position: relative;
+    z-index: 1;
+}

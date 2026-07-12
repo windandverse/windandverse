@@ -8,20 +8,7 @@ async function fetchData(url) {
     return await response.json();
 }
 
-    /* ── Card palettes ──
-       FIX: ran every palette's title/subtext color through actual WCAG
-       contrast math against its own background (the #4b2e19 palette
-       reported as unreadable had a subtext contrast of just 1.39:1 — WCAG's
-       minimum for normal text is 4.5:1). That check surfaced the same
-       problem in 11 of the 15 palettes' subtext colors, and 2 of 15 had
-       failing TITLE colors too (#dd7057 at 2.65:1, #5e6253 at 2.36:1) —
-       both backgrounds were simply too close in lightness to their
-       original light title color to ever read well. Every color below has
-       been verified to clear 4.5:1 against its own bg; where a fix was
-       needed, the replacement was chosen to stay within that palette's
-       existing warm/cool hue family (lightened or darkened, not swapped to
-       an unrelated color) so the palette's overall mood doesn't change,
-       just its readability. */
+    /*  Card palettes  */
     const cardPalettes = [
         { bg: '#1a1a1e', text: '#e4d9c5', subtext: '#b8a994', accent: '#8a7a5a', border: '#3a352a', qMark: '#3a352a', pattern: 'dots' },
         { bg: '#6a5b74', text: '#f0e6d3', subtext: '#e5dcd0', accent: '#3a2c20', border: '#14150a', qMark: '#3a2c20', pattern: 'lines' },
@@ -62,17 +49,7 @@ async function fetchData(url) {
         return Math.abs(hash) % modulo;
     }
 
-    /* ══════════════════════════════════════
-       DYNAMIC HEADER HEIGHT
-       FIX: body's top padding was a hardcoded 80px in CSS, which silently
-       goes stale whenever header content changes height (e.g. restoring the
-       quote-slideshow block made the header taller again). This measures
-       the header's actual rendered height and exposes it as --header-height
-       on the root element, which global.css's "body { padding-top:
-       var(--header-height, 80px); }" reads — so spacing self-corrects on
-       load, on resize, and on font-loading reflows, instead of needing a
-       manually-tuned pixel number every time the header's content changes.
-    ══════════════════════════════════════ */
+    /*  DYNAMIC HEADER HEIGHT */
     const siteHeader = document.querySelector('header');
     function syncHeaderHeight() {
         if (!siteHeader) return;
@@ -88,9 +65,7 @@ async function fetchData(url) {
         }
     }
 
-    /* ══════════════════════════════════════
-       SITE NAV
-    ══════════════════════════════════════ */
+    /* SITE NAV */
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const mobileSidebar = document.getElementById('mobileSidebar');
     const navOverlay = document.getElementById('navOverlay');
@@ -103,9 +78,7 @@ async function fetchData(url) {
     if (navOverlay) navOverlay.addEventListener('click', closeNav);
     document.querySelectorAll('.mobile-nav-links a').forEach(l => l.addEventListener('click', closeNav));
 
-    /* ══════════════════════════════════════
-       QUOTE SLIDESHOW
-    ══════════════════════════════════════ */
+    /*  QUOTE SLIDESHOW */
     const quoteSlides = document.querySelectorAll('.quote-slide');
     if (quoteSlides.length) {
         let qi = 0;
@@ -114,12 +87,10 @@ async function fetchData(url) {
             quoteSlides[qi].classList.remove('active');
             qi = (qi + 1) % quoteSlides.length;
             quoteSlides[qi].classList.add('active');
-        }, 4500);
+        }, 8000);
     }
 
-    /* ══════════════════════════════════════
-       HERO SLIDESHOW
-    ══════════════════════════════════════ */
+    /* HERO SLIDESHOW */
     document.querySelectorAll('.hero-slideshow').forEach(box => {
         const slides = box.querySelectorAll('.hero-slide');
         if (!slides.length) return;
@@ -133,15 +104,11 @@ async function fetchData(url) {
         }, 5000);
     });
 
-    /* ══════════════════════════════════════
-       BACK TO TOP
-    ══════════════════════════════════════ */
+    /*  BACK TO TOP */
     const backToTop = document.querySelector('.back-to-top');
     if (backToTop) backToTop.addEventListener('click', e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
-    /* ══════════════════════════════════════
-       FLOATING "ALL POEMS" BUTTON / SIDEBAR
-    ══════════════════════════════════════ */
+    /*  FLOATING "ALL POEMS" BUTTON / SIDEBAR */
     const collectionBtnWrap = document.getElementById('collectionBtnWrap');
     const collectionSidebar = document.getElementById('collectionSidebar');
 
@@ -188,9 +155,7 @@ document.addEventListener('click', (e) => {
     delegateShareClick(e);
 });
 
-    /* ══════════════════════════════════════
-       SHARE SYSTEM
-    ══════════════════════════════════════ */
+    /* SHARE SYSTEM */
     const SITE_URL = 'https://windandverse.com';
 
     const SHARE_SVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -409,15 +374,6 @@ document.addEventListener('click', (e) => {
         const fullUrl = url.startsWith('http') ? url : `${SITE_URL}/${url}`;
         const text = shareText || quoteLines.join(' / ');
 
-        // FIX: was always "wind-and-verse-quote.png" regardless of which
-        // poem/story/post was being shared. Deriving the name from the
-        // page's URL slug (e.g. "/poem/balcony" -> "balcony", matching the
-        // poem's actual .md filename) instead of the title text, since
-        // titles can contain punctuation, accents, or emoji (some poem
-        // author fields in this site's content do) that aren't safe or
-        // meaningful in a filename. Falls back to the generic name if no
-        // slug can be extracted (e.g. sharing from the homepage, which has
-        // no single-item slug).
         let slug = '';
         try {
             const segments = new URL(fullUrl).pathname.split('/').filter(Boolean);
@@ -455,10 +411,6 @@ document.addEventListener('click', (e) => {
             }
         });
 
-        /* ── FIX: set up the row's initial state ONCE, before the loop,
-           instead of resetting display:'none' on every iteration.
-           That repeated reset is what fought with the "More options"
-           toggle and made the first click behave unpredictably. ── */
         socialRow.innerHTML = '';
         socialRow.style.display = 'none';
         socialRow.removeAttribute('hidden');
@@ -473,9 +425,6 @@ document.addEventListener('click', (e) => {
                 el.href = pl.href; el.target = '_blank'; el.rel = 'noopener noreferrer';
             } else {
                 // Fallback for any future platform added here without a real
-                // share-intent URL (none currently in the list use this path,
-                // now that Instagram/Snapchat/TikTok/Mastodon have all been
-                // removed — every remaining platform has a working href).
                 el.type = 'button';
                 el.addEventListener('click', () => {
                     dlBtn.click();
@@ -499,23 +448,7 @@ document.addEventListener('click', (e) => {
 // ... existing code in your main.js ...
 // ... your functions like openShareFlow, toggleFullScreen, etc. are up here ...
 
-/* ══════════════════════════════════════
-   FULLSCREEN POEM MODE
-   FIX: this previously only called the native browser
-   Fullscreen API on <html>, which never added the
-   `.fullscreen` class that global.css actually styles
-   (.poem-display.fullscreen). So even when the browser
-   went fullscreen, the poem still rendered with the old
-   layout — looked broken/did nothing useful.
-
-   Now it: 1) toggles `.fullscreen` on the actual poem
-   container (driving all the CSS), and 2) requests native
-   fullscreen on that same element (so header/footer/chrome
-   get hidden) — but native fullscreen failing (e.g. blocked
-   by the browser, or unsupported on iOS Safari) no longer
-   prevents the visual "fullscreen mode" from working, since
-   the class toggle happens independently of the API call.
-══════════════════════════════════════ */
+/* FULLSCREEN POEM MODE */
 function toggleFullScreen() {
     const target = document.getElementById('poem-container') || document.querySelector('.poem-display');
     if (!target) return;
@@ -529,28 +462,7 @@ function toggleFullScreen() {
         expandBtn.innerHTML = turningOn ? COLLAPSE_SVG : EXPAND_SVG;
         expandBtn.setAttribute('aria-label', turningOn ? 'Exit fullscreen' : 'Expand poem fullscreen');
     }
-
-    // FIX: previously this also called target.requestFullscreen() /
-    // document.exitFullscreen() as a "best-effort" native fullscreen layer
-    // on top of the CSS-class approach above. That actively broke sharing
-    // while fullscreen: the native Fullscreen API renders ONLY the
-    // fullscreened element's own subtree — anything outside it (like
-    // #shareOverlay, which getShareOverlay() appends directly to <body>,
-    // making it a SIBLING of #poem-container rather than a descendant)
-    // becomes invisible and unreachable the moment native fullscreen
-    // engages, regardless of z-index. That's why the share panel produced
-    // no backdrop at all in fullscreen — it wasn't rendering behind
-    // anything, the browser simply wasn't displaying it.
-    // The CSS-class fullscreen already gives the same full-bleed visual
-    // (fixed position, 100vw/100vh, opaque background, hides header/footer
-    // since they're outside .poem-display) without this isolation problem,
-    // so the native API call is no longer used here at all.
 }
-
-// Kept for any other native-fullscreen state changes (e.g. user presses
-// Esc while genuinely in native fullscreen for some other reason) so the
-// .fullscreen class doesn't get stuck out of sync — harmless no-op now that
-// toggleFullScreen() no longer requests native fullscreen itself.
 document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement) {
         const target = document.getElementById('poem-container') || document.querySelector('.poem-display');
@@ -565,14 +477,7 @@ document.addEventListener('fullscreenchange', () => {
     }
 });
 
-/* FIX: the expand/fullscreen button is now hidden on desktop widths (see
-   global.css, "@media (min-width: 1000px) { #poemExpandBtn { display:
-   none; } }") since fullscreen mode doesn't look good there. Without this,
-   someone who entered fullscreen on mobile/tablet and then resized the
-   window (or rotated a tablet) past that breakpoint would get stuck: the
-   only button that exits fullscreen would have just disappeared, with no
-   other visible way out. This watches for the window crossing that
-   threshold while fullscreen is active and exits automatically. */
+
 window.addEventListener('resize', () => {
     if (window.innerWidth >= 1000) {
         const target = document.getElementById('poem-container') || document.querySelector('.poem-display');
@@ -582,31 +487,7 @@ window.addEventListener('resize', () => {
     }
 });
 
-/* ══════════════════════════════════════
-   POEM LINE NORMALIZATION
-   FIX: poems are written in Markdown two different ways —
-   some poems put a blank line between every single line
-   (each line becomes its own <p>), others use a trailing
-   double-space "hard break" within a stanza (the whole
-   stanza becomes ONE <p> with <br> tags between lines).
-
-   The old selection code assumed every <p> in #poem-body
-   was exactly one line. For "one <p> per stanza" poems this
-   meant: tapping anywhere selected the entire stanza as a
-   block, and quoteLines ended up containing a whole
-   multi-line stanza as a single chunk (which is also why the
-   share card showed a "duplicated title" — the first stanza's
-   full text got used in place of a single line).
-
-   This function runs once per poem page load and rewrites the
-   DOM so every visual line — whether it originally came from
-   its own <p> or from a <br>-joined stanza — becomes its own
-   <p class="poem-line">. The last line of each original stanza
-   gets an extra class, "stanza-break", which carries the larger
-   gap that used to come from separate <p> margins, so stanzas
-   still read as visually grouped instead of every line getting
-   equal spacing.
-══════════════════════════════════════ */
+/* POEM LINE NORMALIZATION */
 function normalizePoemLines() {
     const body = document.getElementById('poem-body');
     if (!body || body.dataset.linesNormalized === 'true') return;
@@ -644,14 +525,6 @@ function initPoemUI() {
     // BEFORE wiring up any click handling that depends on line structure.
     normalizePoemLines();
 
-    // FIX: Prev/Next are plain <a href> links causing a full page reload
-    // (this site has no view-transitions/client router), which wipes all JS
-    // state including the .fullscreen class toggled by toggleFullScreen().
-    // To let someone stay in fullscreen while paging through poems with
-    // Prev/Next, a flag is written to sessionStorage the instant they click
-    // a nav link WHILE fullscreen is active (synchronous, so it completes
-    // before the browser unloads the page for navigation) — then restored
-    // immediately on the next page's load, below.
     document.querySelectorAll('.fullscreen-nav-link').forEach(link => {
         link.addEventListener('click', () => {
             const poemDisplay = document.getElementById('poem-container') || document.querySelector('.poem-display');
@@ -692,18 +565,7 @@ function delegateShareClick(event) {
     // poem.astro) that calls window.openShareFlow directly — keep excluding
     // #poem-container so this generic handler doesn't also fire for it.
     //
-    // FIX: #story-container used to be excluded here too, on the assumption
-    // stories had their own working inline share script — they did, but it
-    // was a bespoke, broken one (a bare URL-input overlay with no title/
-    // description, firing ALONGSIDE this very function on the same click
-    // since the exclusion check came AFTER .share-btn was already matched —
-    // actually the exclusion did stop this function from running for
-    // stories, but that just meant NEITHER system worked correctly: the
-    // bespoke overlay had no styling tie-in and this function's story-
-    // extraction logic below was unreachable dead code). That bespoke
-    // overlay has been removed from stories/[slug].astro; stories now rely
-    // entirely on this function, the same way blog posts do, so the
-    // exclusion is removed and the branch below is reachable again.
+
     if (btn.closest('#poem-container')) {
         return; 
     }
@@ -751,7 +613,7 @@ function delegateShareClick(event) {
 document.addEventListener('DOMContentLoaded', initPoemUI);
 document.addEventListener('astro:page-load', initPoemUI);
 
-/* ══════════════════════════════════════
+/* 
    EXPOSE TO is:inline SCRIPTS
    FIX: this file is loaded with <script type="module">
    in BaseLayout.astro, so none of the functions above are
@@ -759,8 +621,7 @@ document.addEventListener('astro:page-load', initPoemUI);
    is a separate is:inline script and calls toggleFullScreen()
    and openShareFlow() as bare globals — without this, both
    calls threw "toggleFullScreen is not defined" /
-   "openShareFlow is not defined" in the console and did nothing.
-══════════════════════════════════════ */
+   "openShareFlow is not defined" in the console and did nothing. */
 window.toggleFullScreen = toggleFullScreen;
 window.openShareFlow = openShareFlow;
 // Needed by [slug].astro / poem.astro's inline <script>, which compute a
