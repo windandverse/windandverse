@@ -22,28 +22,35 @@ const routePrefix = collectionType === 'POEMS' ? 'poem' :
 
 <head>
     <BaseHead title={title} description={description} ogImage={ogImage} />
+    <!-- Preload background image so it's ready before paint -->
+    <link rel="preload" as="image" href={backgroundImage.src} />
+    <style>
+        /* Inline critical CSS — applies before external stylesheet loads */
+        html { background-color: #1a1816; }
+        body.site-bg {
+            background-image: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url('{BG_SRC}');
+        }
+    </style>
 </head>
 
-<body style={`background-image: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url(${backgroundImage.src});`}>
+<body class="site-bg" id="site-body">
 
-    <!-- Skip to content: visible only on keyboard focus -->
     <a href="#main-content" class="skip-to-content">Skip to content</a>
 
     <header>
-    <a href="/" class="logo">
-    <img src="/LG.png" alt="Wind & Verse" class="logo-icon" />
-    wind and verse
-</a>
+        <a href="/" class="logo">
+            <img src="/LG.png" alt="" class="logo-icon" aria-hidden="true" />
+            <span class="logo-text">WIND AND VERSE</span>
+        </a>
 
         <div class="quote-slideshow">
             <div class="quote-card">
                 <div class="quote-container">
-                    <div class="quote-slide active">~ Meaning is limited, life is edited</div>
-                    <div class="quote-slide">~ The game is rigged. Life is not fair</div>
-                    <div class="quote-slide">~ No one lives on the stairs.</div>
-                    <div class="quote-slide">~ Perfection is sleight. Comfort in make up.</div>
-                    <div class="quote-slide">~ The page holds what the wind cannot.</div>
-                     <div class="quote-slide">~ It is not about the source nor the destination, it is about the navigation</div>
+                    <div class="quote-slide active">"Meaning is limited, life is edited"</div>
+                    <div class="quote-slide">"You are here. Then you won't be. That's not sad that's why we write."</div>
+                    <div class="quote-slide">"No one lives on the stairs."</div>
+                    <div class="quote-slide">"Perfection is sleight. Comfort in make up."</div>
+                    <div class="quote-slide">"The page holds what the wind cannot."</div>
                 </div>
             </div>
         </div>
@@ -86,7 +93,6 @@ const routePrefix = collectionType === 'POEMS' ? 'poem' :
         </div>
     </aside>
 
-    <!-- id here is what the skip-to-content link jumps to -->
     <div id="main-content">
         <slot />
     </div>
@@ -128,7 +134,7 @@ const routePrefix = collectionType === 'POEMS' ? 'poem' :
     <footer>
         <div class="footer-inner">
             <div class="footer-brand">
-                <a href="/" class="footer-logo-link">wind and verse</a>
+                <a href="/" class="footer-logo-link">WIND AND VERSE</a>
                 <p class="footer-tagline">Wind comes and goes like a whispered breath, but verse stays on conquering death.</p>
                 <div class="footer-socials">
                     <a href="https://instagram.com/windandverse" target="_blank" rel="noopener noreferrer" class="footer-social-link">
@@ -177,6 +183,12 @@ const routePrefix = collectionType === 'POEMS' ? 'poem' :
             <a href="#" class="back-to-top">↑ back to top</a>
         </div>
     </footer>
+
+    <!-- Set background image via JS after page load to avoid render blocking -->
+    <script define:vars={{ bgSrc: backgroundImage.src }}>
+        document.getElementById('site-body').style.backgroundImage = 
+            `linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url(${bgSrc})`;
+    </script>
 
     <script type="module">
         import "../scripts/main.js";

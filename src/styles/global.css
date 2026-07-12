@@ -45,7 +45,6 @@ header {
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 9999;
-    isolation: isolate;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -193,7 +192,7 @@ header {
 .subscribe-success { display: none; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-style: italic; color: #c4a882; margin-top: 1rem; }
 
 /* ── FOOTER ── */
-footer { isolation: isolate; background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); padding: 60px 5% 80px; }
+footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); padding: 60px 5% 80px; }
 .footer-inner { display: grid; grid-template-columns: 1.5fr 0.8fr 1fr; gap: 48px; max-width: 1100px; margin: 0 auto; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: start; }
 .footer-logo-link { display: inline-block; font-size: 1.1rem; font-weight: 300; letter-spacing: 4px; color: #f0e6d8; text-decoration: none; text-transform: uppercase; font-family: 'Libre Baskerville', Georgia, serif; margin-bottom: 16px; transition: color 0.2s; }
 .footer-logo-link:hover { color: #4a6fa5; }
@@ -579,15 +578,17 @@ footer { isolation: isolate; background: #1a1816; border-top: 1px solid rgba(74,
     *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
 }
 
-/* ── READING LIST SCROLL FRICTION FIX ── */
-.reading-entry {
-    transition: none;
+/* ── WINDOWS SCROLL FRICTION FIXES ── */
+/* Remove expensive filters from scroll-visible elements */
+.entry-thumbnail {
+    filter: none;
 }
-.reading-entry:hover {
-    opacity: 0.65;
-    transition: opacity 0.2s ease;
+/* backdrop-filter forces GPU layer on entire page — replace with solid bg */
+.back-to-blog {
+    backdrop-filter: none;
+    background: rgba(26, 24, 20, 0.85);
 }
-.reading-entry:hover .entry-arrow {
-    transform: translateX(4px);
-    transition: transform 0.2s ease;
+/* Remove filter from related images */
+.related-image {
+    filter: none;
 }
