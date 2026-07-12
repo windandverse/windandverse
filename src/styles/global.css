@@ -4,15 +4,18 @@
    Support: #7a9e7e  (dusty sage)
    ════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 html {
     overflow-x: hidden;
     overflow-y: auto;
-    scroll-behavior: smooth;
     height: 100%;
+    background-color: #1a1816;
+}
+
+/* Smooth scroll only on desktop — too laggy on mobile */
+@media (min-width: 1025px) {
+    html { scroll-behavior: smooth; }
 }
 
 body {
@@ -22,22 +25,20 @@ body {
     background-position: center;
     background-attachment: fixed;
     background-repeat: no-repeat;
+    background-color: transparent;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     padding-top: var(--header-height, 80px);
 }
 
-body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0);
-    pointer-events: none;
-    z-index: -1;
+/* Disable fixed background on mobile — major scroll performance killer */
+@media (max-width: 1024px) {
+    body { background-attachment: scroll; }
 }
 
 main { flex: 1; }
+#main-content { flex: 1; background-color: transparent; }
 
 /* ── HEADER ── */
 header {
@@ -73,11 +74,7 @@ header {
 }
 .logo:hover { opacity: 0.9; animation: logoBounce 0.6s cubic-bezier(.34, 1.56, .64, 1); }
 .blog-header .logo { flex: 0 0 auto; }
-.footer-logo-link {
-    font-family: 'Libre Baskerville', Georgia, serif;
-    font-style: normal;
-    letter-spacing: 4px;
-}
+.footer-logo-link { font-family: 'Libre Baskerville', Georgia, serif; font-style: normal; letter-spacing: 4px; }
 
 @keyframes logoBounce {
     0%   { transform: scale(1, 1); }
@@ -87,14 +84,7 @@ header {
     100% { transform: scale(1, 1); }
 }
 
-.logo-icon {
-    width: 65px;
-    height: 65px;
-    object-fit: contain;
-    flex-shrink: 0;
-    display: block;
-    transition: transform 0.3s ease;
-}
+.logo-icon { width: 65px; height: 65px; object-fit: contain; flex-shrink: 0; display: block; transition: transform 0.3s ease; }
 .logo:hover .logo-icon { transform: rotate(12deg); }
 
 @media (max-width: 1000px) {
@@ -107,31 +97,9 @@ header {
 }
 
 .quote-slideshow { flex: 0 1 500px; min-width: 0; max-width: 500px; }
-.quote-card {
-    background: rgba(224,213,192,0.12);
-    border-radius: 40px;
-    padding: 8px 20px;
-    border: 1px solid rgba(224,213,192,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 50px;
-}
+.quote-card { background: rgba(224,213,192,0.12); border-radius: 40px; padding: 8px 20px; border: 1px solid rgba(224,213,192,0.2); display: flex; align-items: center; justify-content: center; min-height: 50px; }
 .quote-container { position: relative; width: 100%; height: 42px; overflow: hidden; }
-.quote-slide {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    opacity: 0;
-    transition: opacity 1.5s ease-in-out;
-    font-size: 0.9rem;
-    font-style: italic;
-    color: #b8a99a;
-    line-height: 1.4;
-}
+.quote-slide { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; opacity: 0; transition: opacity 1.5s ease-in-out; font-size: 0.9rem; font-style: italic; color: #b8a99a; line-height: 1.4; }
 .quote-slide.active { opacity: 1; }
 
 .desktop-nav { flex: 1 0 auto; display: flex; justify-content: flex-end; }
@@ -139,44 +107,13 @@ header {
 .desktop-nav a { text-decoration: none; color: #8a7e6e; font-size: 14px; letter-spacing: 1px; transition: color 0.2s; }
 .desktop-nav a:hover { color: #4a6fa5; }
 
-.hamburger-btn {
-    display: none;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    color: #e0d5c0;
-    font-size: 22px;
-    cursor: pointer;
-    padding: 0;
-    line-height: 1;
-    transition: opacity 0.2s;
-}
+.hamburger-btn { display: none; background: transparent; border: none; box-shadow: none; color: #e0d5c0; font-size: 22px; cursor: pointer; padding: 0; line-height: 1; transition: opacity 0.2s; }
 .hamburger-btn:hover { opacity: 0.7; }
 
-.nav-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.55);
-    z-index: 199;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
+.nav-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 199; opacity: 0; transition: opacity 0.3s ease; }
 .nav-overlay.visible { display: block; opacity: 1; }
 
-.mobile-nav-sidebar {
-    position: fixed;
-    top: var(--header-height, 80px);
-    left: calc(-1 * min(260px, 78vw));
-    width: min(260px, 78vw);
-    height: calc(100% - var(--header-height, 80px));
-    background: #0f0d0b;
-    z-index: 200;
-    display: flex;
-    flex-direction: column;
-    transition: left 0.3s ease;
-    border-right: 1px solid rgba(74,111,165,0.3);
-}
+.mobile-nav-sidebar { position: fixed; top: var(--header-height, 80px); left: calc(-1 * min(260px, 78vw)); width: min(260px, 78vw); height: calc(100% - var(--header-height, 80px)); background: #0f0d0b; z-index: 200; display: flex; flex-direction: column; transition: left 0.3s ease; border-right: 1px solid rgba(74,111,165,0.3); }
 .mobile-nav-sidebar.open { left: 0; }
 .mobile-nav-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px 14px; border-bottom: 1px solid rgba(74,111,165,0.2); }
 .mobile-nav-logo { font-size: 13px; letter-spacing: 3px; color: #e0d5c0; font-family: 'Libre Baskerville', Georgia, serif; text-transform: uppercase; }
@@ -208,22 +145,25 @@ header {
 .sidebar-item.active { background: #4a6fa5; color: #fff; }
 
 /* ── HOME PAGE ── */
-.text-layer { background: #0c0b0a; padding: 5rem 2rem 4.5rem; display: flex; flex-direction: column; align-items: center; text-align: center; }
-.text-eyebrow { font-family: 'Libre Baskerville', serif; font-size: 0.62rem; letter-spacing: 0.35em; color: #c4a882; text-transform: uppercase; opacity: 1; margin: 0 0 1.75rem; }
+.text-layer { background: #0c0b0a; padding: 5rem 2rem 4.5rem; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; z-index: 1; }
+.text-eyebrow { font-family: 'Libre Baskerville', serif; font-size: 0.62rem; letter-spacing: 0.35em; color: #c4a882; text-transform: uppercase; margin: 0 0 1.75rem; }
 .text-headline { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 300; font-style: italic; color: #f0ece4; line-height: 1.25; margin: 0 0 1.5rem; max-width: 560px; }
 .text-headline em { font-style: normal; opacity: 0.42; }
 .text-divider { width: 32px; height: 1px; background: rgba(196, 168, 130, 0.4); margin: 0 auto 1.5rem; }
 .text-body { font-family: 'Libre Baskerville', serif; font-size: 0.82rem; line-height: 1.95; color: rgba(240, 236, 228, 0.72); max-width: 460px; }
 
-.slideshow-layer { position: relative; width: 100%; height: 72vh; min-height: 340px; background: #0c0b0a; overflow: hidden; }
-.hero-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: grayscale(20%) brightness(0.88); transition: opacity 1.6s ease; }
+/* ── SLIDESHOW — NATURAL ASPECT RATIO ── */
+.slideshow-layer { background: #0c0b0a; position: relative; z-index: 1; display: grid; width: 100%; }
+.slideshow-layer > * { grid-area: 1 / 1; }
+.hero-slide { width: 100%; height: auto; display: block; opacity: 0; filter: grayscale(20%) brightness(0.88); transition: opacity 1.6s ease; }
 .hero-slide.active { opacity: 1; }
-.slideshow-fade { position: absolute; bottom: 0; left: 0; right: 0; height: 120px; background: linear-gradient(to bottom, transparent, #0c0b0a); z-index: 1; pointer-events: none; }
+.hero-slide:not(.active) { opacity: 0; }
+.slideshow-fade { align-self: end; position: relative; height: 120px; background: linear-gradient(to bottom, transparent, #0c0b0a); z-index: 1; pointer-events: none; }
 
-.reading-section { background: #0c0b0a; padding: 3.5rem 2rem 6rem; }
+.reading-section { background: #0c0b0a; padding: 3.5rem 2rem 6rem; position: relative; z-index: 1; }
 .reading-inner { max-width: 780px; margin: 0 auto; }
 .reading-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2.5rem; }
-.reading-header h2 { font-family: 'Libre Baskerville', serif; font-size: 0.62rem; letter-spacing: 0.38em; color: #c4a882; text-transform: uppercase; margin: 0; white-space: nowrap; font-weight: 400; opacity: 1; }
+.reading-header h2 { font-family: 'Libre Baskerville', serif; font-size: 0.62rem; letter-spacing: 0.38em; color: #c4a882; text-transform: uppercase; margin: 0; white-space: nowrap; font-weight: 400; }
 .reading-rule { flex: 1; height: 1px; background: rgba(196, 168, 130, 0.2); }
 .reading-list { display: flex; flex-direction: column; }
 .reading-entry { display: grid; grid-template-columns: 96px 1fr auto; align-items: center; gap: 1.75rem; padding: 1.6rem 0; border-bottom: 1px solid rgba(240, 236, 228, 0.07); text-decoration: none; transition: opacity 0.2s ease; }
@@ -232,9 +172,24 @@ header {
 .reading-entry:hover .entry-arrow { transform: translateX(4px); }
 .entry-thumbnail { width: 96px; height: 64px; object-fit: cover; display: block; filter: grayscale(15%) brightness(0.85); }
 .entry-text { display: flex; flex-direction: column; gap: 0.35rem; }
-.entry-category { font-family: 'Libre Baskerville', serif; font-size: 0.6rem; letter-spacing: 0.28em; color: #c4a882; text-transform: uppercase; opacity: 1; }
+.entry-category { font-family: 'Libre Baskerville', serif; font-size: 0.6rem; letter-spacing: 0.28em; color: #c4a882; text-transform: uppercase; }
 .entry-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.15rem, 3vw, 1.6rem); font-weight: 400; font-style: normal; color: #f0ece4; line-height: 1.2; }
 .entry-arrow { font-size: 1rem; color: rgba(196, 168, 130, 0.4); transition: transform 0.2s ease; flex-shrink: 0; }
+
+/* ── SUBSCRIBE ── */
+.subscribe-section { background: #0c0b0a; padding: 5rem 2rem 6rem; border-top: 1px solid rgba(196, 168, 130, 0.12); position: relative; z-index: 1; }
+.subscribe-inner { max-width: 520px; margin: 0 auto; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.subscribe-eyebrow { font-family: 'Libre Baskerville', serif; font-size: 0.62rem; letter-spacing: 0.35em; color: #c4a882; text-transform: uppercase; margin: 0 0 1.25rem; }
+.subscribe-heading { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 300; font-style: normal; color: #f0ece4; line-height: 1.25; margin: 0 0 1rem; }
+.subscribe-body { font-family: 'Libre Baskerville', serif; font-size: 0.8rem; color: rgba(240, 236, 228, 0.72); line-height: 1.8; margin: 0 0 2rem; }
+.subscribe-social-proof { font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.72rem; color: rgba(240, 236, 228, 0.55); margin: 0 0 1.25rem; letter-spacing: 0.02em; }
+.subscribe-field { display: flex; width: 100%; max-width: 420px; border: 1px solid rgba(196, 168, 130, 0.3); border-radius: 40px; overflow: hidden; background: rgba(255,255,255,0.04); }
+.subscribe-input { flex: 1; background: transparent; border: none; outline: none; padding: 13px 20px; font-family: 'Libre Baskerville', serif; font-size: 0.82rem; color: #f0ece4; min-width: 0; }
+.subscribe-input::placeholder { color: rgba(240, 236, 228, 0.3); }
+.subscribe-btn { background: #c4a882; border: none; color: #0c0b0a; padding: 13px 24px; font-family: 'Libre Baskerville', serif; font-size: 0.78rem; letter-spacing: 0.05em; cursor: pointer; white-space: nowrap; transition: background 0.2s; flex-shrink: 0; }
+.subscribe-btn:hover { background: #d4b892; }
+.subscribe-note { font-family: 'Libre Baskerville', serif; font-size: 0.65rem; color: rgba(240, 236, 228, 0.55); margin-top: 0.85rem; }
+.subscribe-success { display: none; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-style: italic; color: #c4a882; margin-top: 1rem; }
 
 /* ── FOOTER ── */
 footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); padding: 60px 5% 80px; }
@@ -244,14 +199,14 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
 .footer-brand .footer-tagline { font-size: 0.82rem; color: #b8a99a; line-height: 1.7; font-style: italic; margin-bottom: 24px; }
 .footer-socials { display: flex; flex-direction: column; gap: 10px; }
 .footer-social-link { color: #b8a99a; text-decoration: none; transition: color 0.2s, transform 0.2s; display: flex; align-items: center; gap: 10px; }
-.footer-social-link span { font-size: 0.85rem; letter-spacing: 0.3px; }
+.footer-social-link span { font-size: 0.85rem; }
 .footer-social-link:hover { color: #4a6fa5; transform: translateX(4px); }
-.footer-nav-group h4 { font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: #4a6fa5; margin-bottom: 20px; font-weight: 400; }
+.footer-nav-group h4 { font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: #3d5d8a; margin-bottom: 20px; font-weight: 500; }
 .footer-nav-group ul { list-style: none; padding: 0; margin: 0; }
 .footer-nav-group li { margin-bottom: 12px; }
 .footer-nav-group a { color: #b8a99a; text-decoration: none; font-size: 0.88rem; letter-spacing: 0.5px; transition: color 0.2s, padding-left 0.2s; display: inline-block; }
-.footer-nav-group a:hover { color: #b8a99a; padding-left: 4px; }
-.footer-quote-block { border-left: 2px solid rgba(74,111,165,0.3); padding-left: 24px; }
+.footer-nav-group a:hover { padding-left: 4px; }
+.footer-quote-block { border-left: 2px solid rgba(74,111,165,0.5); padding-left: 24px; }
 .footer-quote-block blockquote { font-size: 1.1rem; font-style: italic; color: #b8a99a; line-height: 1.7; font-family: 'Libre Baskerville', Georgia, serif; font-weight: 300; margin-bottom: 12px; }
 .footer-name { font-size: 0.72rem; color: #b8a99a; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
 .footer-bottom { max-width: 1100px; margin: 0 auto; padding: 24px 120px 28px 0; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.72rem; color: #b8a99a; flex-wrap: wrap; }
@@ -264,15 +219,14 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
 .back-to-blog { position: fixed; bottom: 30px; left: 30px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); color: #e0d8cc; padding: 10px 20px; border-radius: 40px; text-decoration: none; font-size: 0.85rem; font-family: monospace; transition: all 0.3s; z-index: 100; border: 1px solid rgba(74,111,165,0.3); }
 .back-to-blog:hover { background: #4a6fa5; color: white; }
 
-/* ── BLOG POST ── */
-.blog-fullscreen { max-width: 800px; margin: 0 auto; padding: 25px 24px 100px; min-height: 100vh; }
+/* ── BLOG / STORY CONTENT ── */
+.blog-fullscreen { max-width: 800px; margin: 0 auto; padding: 25px 24px 100px; min-height: 100vh; background: transparent; }
 .blog-date-full { color: #3a3530; font-size: 0.85rem; }
 .blog-category-full { color: #4a6fa5; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
 .blog-fullscreen h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-style: normal; font-weight: 400; font-size: clamp(2rem, 5vw, 3rem); letter-spacing: 0.02em; line-height: 1.2; color: #1a1816; margin-bottom: 48px; }
 .blog-content-full { color: #2c2a28; line-height: 1.85; font-size: 1.1rem; font-family: Georgia, 'Times New Roman', serif; }
 .blog-content-full p { margin-bottom: 1.8rem; }
 .blog-content-full p:first-of-type::first-letter { font-size: 4rem; font-weight: 400; float: left; line-height: 0.8; margin-right: 12px; color: #4a6fa5; }
-
 .blog-meta-left, .stories-meta-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
 .blog-meta-share-btn, .story-meta-share-btn { flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(74,111,165,0.4); border-radius: 50%; color: #4a6fa5; cursor: pointer; transition: background 0.2s, color 0.2s; }
 .blog-meta-share-btn:hover, .story-meta-share-btn:hover { background: #4a6fa5; color: #fff; }
@@ -283,9 +237,13 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
 
 /* ── IMAGE CAPTION ── */
 .featured-image { display: flex; flex-direction: column; align-items: center; margin-bottom: 3rem; }
+.featured-image img { width: 100%; height: auto; display: block; border-radius: 12px; object-fit: contain; max-height: 600px; }
 .image-caption { font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.7rem; font-style: italic; color: rgba(26, 24, 20, 0.42); text-align: center; margin-top: 0.6rem; letter-spacing: 0.02em; line-height: 1.5; }
 .image-caption a { color: rgba(26, 24, 20, 0.42); text-decoration: underline; text-underline-offset: 2px; transition: color 0.2s; }
 .image-caption a:hover { color: #4a6fa5; }
+
+/* Thumbnails keep cover crop */
+.story-image img, .related-image, .blog-card-img, .entry-thumbnail { object-fit: cover; }
 
 /* ── BLOGS PAGE ── */
 .blogs-page { max-width: 800px; margin: 0 auto; padding: 100px 20px 60px; }
@@ -316,7 +274,7 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
 .poems-header { text-align: center; margin-bottom: 48px; }
 .poems-header h1 { font-size: 2.5rem; font-weight: 300; color: #1a1816; margin-bottom: 12px; letter-spacing: 2px; font-family: 'Cormorant Garamond', Georgia, serif; font-style: normal; }
 .poems-subhead { color: #8a7e6e; font-size: 0.95rem; }
-.poem-display { background: #ffffff; border-radius: 24px; padding: 48px 40px; min-height: 500px; display: flex; flex-direction: column; justify-content: space-between; transition: border-radius 0.2s; }
+.poem-display { background: #ffffff; border-radius: 24px; padding: 48px 40px; min-height: 500px; display: flex; flex-direction: column; justify-content: space-between; }
 #poem-title { font-size: 2rem; color: #7a3548; margin-bottom: 0; font-weight: 300; font-family: 'Cormorant Garamond', Georgia, serif; font-style: normal; letter-spacing: 0.5px; border-left: 3px solid #4a6fa5; padding-left: 20px; padding-top: 8px; padding-bottom: 8px; line-height: 1.2; }
 #poem-body { color: #5a4a3a; line-height: 1.9; font-size: 1.05rem; font-family: 'Libre Baskerville', Georgia, serif; flex: 1; }
 #poem-body p { margin-bottom: 16px; }
@@ -381,7 +339,7 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
 .ssb:hover { background: rgba(74,111,165,0.18); border-color: rgba(74,111,165,0.5); transform: translateY(-2px); }
 .ssb-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .ssb-icon svg { width: 100%; height: 100%; display: block; fill: currentColor; }
-.ssb-name { font-size: 0.6rem; letter-spacing: 0.2px; color: #b8a99a; line-height: 1.25; overflow-wrap: break-word; word-break: break-word; text-align: center; width: 100%; white-space: nowrap; text-overflow: ellipsis; }
+.ssb-name { font-size: 0.6rem; color: #b8a99a; line-height: 1.25; text-align: center; width: 100%; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
 .share-app-tip { margin-top: 14px; padding: 10px 14px; border-radius: 10px; background: rgba(74,111,165,0.12); border: 1px solid rgba(74,111,165,0.3); font-size: 0.78rem; color: #cfe0f0; font-style: italic; line-height: 1.5; text-align: center; }
 .inline-share-btn { display: inline-flex; align-items: center; gap: 6px; background: transparent; border: 1px solid rgba(74,111,165,0.3); color: #4a6fa5; padding: 8px 14px; border-radius: 30px; font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.8rem; cursor: pointer; transition: background 0.2s, color 0.2s; }
 .inline-share-btn:hover { background: #4a6fa5; color: #fff; }
@@ -402,9 +360,9 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
 .story-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; }
 
 /* ── ABOUT PAGE ── */
-.about-page { max-width: 860px; margin: 0 auto; padding: 80px 24px 80px; }
-.writer-banner { text-align: center; padding: 60px 24px 48px; border-bottom: 1px solid rgba(74,111,165,0.15); margin-bottom: 64px; }
-.writer-banner-label { font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase; color: #4a6fa5; margin-bottom: 20px; display: block; }
+.about-page { max-width: 860px; margin: 0 auto; padding: 80px 24px; }
+.writer-banner { text-align: center; padding: 60px 24px 48px; border-bottom: 1px solid rgba(74,111,165,0.3); margin-bottom: 64px; }
+.writer-banner-label { font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase; color: #3d5d8a; margin-bottom: 20px; display: block; font-weight: 500; }
 .writer-photo { width: 132px; height: 132px; margin: 0 auto 28px; border-radius: 50%; border: 3px solid #4a6fa5; box-shadow: 0 8px 24px rgba(0,0,0,0.18); overflow: hidden; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1a1816 0%, #0f0d0b 100%); }
 .writer-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .writer-photo-placeholder { font-size: 2.6rem; color: #e0d8cc; font-family: 'Libre Baskerville', Georgia, serif; }
@@ -413,43 +371,27 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
 .about-pull-quote { text-align: center; padding: 48px 32px; margin: 0 0 64px; position: relative; }
 .about-pull-quote::before { content: '\201C'; font-size: 8rem; color: rgba(74,111,165,0.12); position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-family: Georgia, serif; line-height: 1; pointer-events: none; }
 .about-pull-quote blockquote { font-size: 1.5rem; font-style: italic; color: #2c2a28; font-weight: 300; line-height: 1.6; font-family: 'Cormorant Garamond', Georgia, serif; position: relative; z-index: 1; margin-bottom: 16px; }
-.about-pull-quote cite { font-size: 0.8rem; color: #4a6fa5; letter-spacing: 2px; text-transform: uppercase; font-style: normal; }
+.about-pull-quote cite { font-size: 0.8rem; color: #3d5d8a; letter-spacing: 2px; text-transform: uppercase; font-style: normal; }
 .about-chapter { display: grid; grid-template-columns: 80px 1fr; gap: 0 32px; margin-bottom: 72px; align-items: start; }
-.about-chapter-number { font-size: 4rem; font-weight: 300; color: rgba(74,111,165,0.18); line-height: 1; font-family: 'Cormorant Garamond', Georgia, serif; text-align: right; padding-top: 4px; user-select: none; }
-.about-chapter-label { font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: #4a6fa5; display: block; margin-bottom: 8px; }
+.about-chapter-number { font-size: 4rem; font-weight: 300; color: rgba(74,111,165,0.45); line-height: 1; font-family: 'Cormorant Garamond', Georgia, serif; text-align: right; padding-top: 4px; user-select: none; }
+.about-chapter-label { font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: #3d5d8a; display: block; margin-bottom: 8px; font-weight: 500; }
 .about-chapter-title { font-size: 1.6rem; font-weight: 300; color: #1a1816; font-family: 'Cormorant Garamond', Georgia, serif; font-style: normal; margin-bottom: 20px; line-height: 1.3; }
 .about-chapter-body p { color: #3a3530; font-size: 1rem; line-height: 1.85; margin-bottom: 16px; }
 .about-chapter-body p:first-of-type::first-letter { font-size: 3rem; float: left; line-height: 0.8; margin-right: 10px; color: #4a6fa5; font-family: 'Cormorant Garamond', Georgia, serif; }
-.about-stats { display: flex; gap: 0; margin: 32px 0 24px; border: 1px solid rgba(74,111,165,0.15); border-radius: 16px; overflow: hidden; }
-.about-stat { flex: 1; text-align: center; padding: 20px 12px; border-right: 1px solid rgba(74,111,165,0.12); }
+.about-stats { display: flex; gap: 0; margin: 32px 0 24px; border: 1px solid rgba(74,111,165,0.3); border-radius: 16px; overflow: hidden; }
+.about-stat { flex: 1; text-align: center; padding: 20px 12px; border-right: 1px solid rgba(74,111,165,0.25); }
 .about-stat:last-child { border-right: none; }
-.about-stat-value { display: block; font-size: 1.6rem; color: #4a6fa5; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; margin-bottom: 4px; }
-.about-stat-label { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: #8a7e6e; }
-.about-philosophy-block { background: #1a1816; border-radius: 20px; padding: 48px 40px; margin: 0 0 72px; margin-left: 112px; width: calc(100% - 112px); text-align: center; }
-.about-philosophy-block .philosophy-word { display: block; font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase; color: #4a6fa5; margin-bottom: 20px; }
+.about-stat-value { display: block; font-size: 1.6rem; color: #4a6fa5; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; margin-bottom: 4px; }
+.about-stat-label { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: #5a4a3a; }
+.about-philosophy-block { background: #1a1816; border-radius: 20px; padding: 48px 40px; margin: 0 0 72px 112px; width: calc(100% - 112px); text-align: center; border: 1px solid rgba(74,111,165,0.2); }
+.about-philosophy-block .philosophy-word { display: block; font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase; color: #7aa3d4; margin-bottom: 20px; }
 .about-philosophy-block blockquote { font-size: 1.4rem; font-style: italic; color: #e0d5c0; line-height: 1.7; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; margin-bottom: 24px; }
 .about-philosophy-block p { font-size: 0.9rem; color: #8a7e6e; line-height: 1.7; max-width: 560px; margin: 0 auto; }
-.about-closing { text-align: center; padding: 48px 24px; border-top: 1px solid rgba(74,111,165,0.15); }
+.about-closing { text-align: center; padding: 48px 24px; border-top: 1px solid rgba(74,111,165,0.3); }
 .about-closing p { font-size: 1rem; color: #5a4a3a; line-height: 1.8; margin-bottom: 24px; font-style: italic; }
 .about-closing-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-.about-closing-link { display: inline-block; padding: 12px 28px; border-radius: 40px; text-decoration: none; font-size: 0.85rem; letter-spacing: 1px; transition: all 0.25s; }
-.about-closing-link.primary, .about-closing-link.secondary { background: transparent; color: #4a6fa5; border: 1px solid rgba(74,111,165,0.4); }
-.about-closing-link.primary:hover, .about-closing-link.secondary:hover { background: #4a6fa5; color: #fff; }
-
-/* ── SUBSCRIBE ── */
-.subscribe-section { background: #0c0b0a; padding: 5rem 2rem 6rem; border-top: 1px solid rgba(196, 168, 130, 0.12); }
-.subscribe-inner { max-width: 520px; margin: 0 auto; text-align: center; display: flex; flex-direction: column; align-items: center; }
-.subscribe-eyebrow { font-family: 'Libre Baskerville', serif; font-size: 0.62rem; letter-spacing: 0.35em; color: #c4a882; text-transform: uppercase; opacity: 1; margin: 0 0 1.25rem; }
-.subscribe-heading { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 300; font-style: normal; color: #f0ece4; line-height: 1.25; margin: 0 0 1rem; }
-.subscribe-body { font-family: 'Libre Baskerville', serif; font-size: 0.8rem; color: rgba(240, 236, 228, 0.72); line-height: 1.8; margin: 0 0 2rem; }
-.subscribe-social-proof { font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.72rem; color: rgba(240, 236, 228, 0.55); margin: 0 0 1.25rem; letter-spacing: 0.02em; }
-.subscribe-field { display: flex; gap: 0; width: 100%; max-width: 420px; border: 1px solid rgba(196, 168, 130, 0.3); border-radius: 40px; overflow: hidden; background: rgba(255,255,255,0.04); }
-.subscribe-input { flex: 1; background: transparent; border: none; outline: none; padding: 13px 20px; font-family: 'Libre Baskerville', serif; font-size: 0.82rem; color: #f0ece4; min-width: 0; }
-.subscribe-input::placeholder { color: rgba(240, 236, 228, 0.3); }
-.subscribe-btn { background: #c4a882; border: none; color: #0c0b0a; padding: 13px 24px; font-family: 'Libre Baskerville', serif; font-size: 0.78rem; letter-spacing: 0.05em; cursor: pointer; white-space: nowrap; transition: background 0.2s; flex-shrink: 0; }
-.subscribe-btn:hover { background: #d4b892; }
-.subscribe-note { font-family: 'Libre Baskerville', serif; font-size: 0.65rem; color: rgba(240, 236, 228, 0.55); margin-top: 0.85rem; letter-spacing: 0.02em; }
-.subscribe-success { display: none; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-style: italic; color: #c4a882; margin-top: 1rem; }
+.about-closing-link { display: inline-block; padding: 12px 28px; border-radius: 40px; text-decoration: none; font-size: 0.85rem; letter-spacing: 1px; transition: all 0.25s; background: transparent; color: #4a6fa5; border: 1px solid rgba(74,111,165,0.4); }
+.about-closing-link:hover { background: #4a6fa5; color: #fff; }
 
 /* ── 404 ── */
 .not-found-page { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 4rem 2rem; text-align: center; }
@@ -463,15 +405,7 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
 /* ── SKIP TO CONTENT ── */
 .skip-to-content { position: absolute; top: -100%; left: 1rem; background: #1a1816; color: #e0d5c0; padding: 10px 20px; border-radius: 0 0 8px 8px; font-size: 0.85rem; text-decoration: none; z-index: 99999; transition: top 0.2s; }
 .skip-to-content:focus { top: 0; }
-
-/* ── FOCUS STYLES ── */
 :focus-visible { outline: 2px solid #4a6fa5; outline-offset: 3px; border-radius: 3px; }
-
-/* ── IOS BACKGROUND FIX ── */
-@supports (-webkit-touch-callout: none) { body { background-attachment: scroll; } }
-
-/* ── MAIN CONTENT WRAPPER ── */
-#main-content { flex: 1; }
 
 /* ── RELATED CONTENT ── */
 .related-section { max-width: 800px; margin: 3rem auto 0; padding: 2.5rem 0 2rem; border-top: 1px solid rgba(26, 24, 20, 0.1); }
@@ -494,9 +428,19 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
 .comment-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.6rem; }
 .comment-header h3 { font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase; color: #2c2a28; font-weight: 400; white-space: nowrap; margin: 0; }
 .comment-rule { flex: 1; height: 1px; background: rgba(26, 24, 20, 0.2); }
-.comment-note { font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.75rem; color: #5a4a3a; font-style: italic; margin: 0 0 1.75rem; letter-spacing: 0.01em; }
-.cusdis-wrapper { background: transparent; border-radius: 12px; overflow: hidden; }
-#cusdis_thread iframe { width: 100% !important; border: none !important; border-radius: 12px; }
+.comment-note { font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.75rem; color: #5a4a3a; font-style: italic; margin: 0 0 1.75rem; }
+.comment-form { display: flex; flex-direction: column; gap: 12px; }
+.comment-fields { display: flex; flex-direction: column; gap: 10px; }
+.comment-input, .comment-textarea { font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.85rem; color: #1a1814; background: #faf8f5; border: 1px solid rgba(26, 24, 20, 0.18); border-radius: 10px; padding: 12px 16px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; width: 100%; line-height: 1.65; }
+.comment-textarea { resize: vertical; min-height: 110px; font-style: italic; }
+.comment-input::placeholder, .comment-textarea::placeholder { color: rgba(26, 24, 20, 0.35); font-style: italic; }
+.comment-input:focus, .comment-textarea:focus { border-color: #4a6fa5; box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.08); background: #fff; }
+.comment-footer { display: flex; justify-content: space-between; align-items: center; }
+.comment-char-count { font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.62rem; color: rgba(26, 24, 20, 0.38); }
+.comment-submit { background: #1a1816; border: none; color: #e0d5c0; font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.78rem; letter-spacing: 0.08em; padding: 10px 26px; border-radius: 40px; cursor: pointer; transition: background 0.2s, opacity 0.2s; }
+.comment-submit:hover { background: #4a6fa5; }
+.comment-submit:disabled { opacity: 0.5; cursor: default; }
+.comment-status { font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.72rem; font-style: italic; color: #7a9e7e; min-height: 1rem; }
 
 /* ── EMOJI REACTIONS ── */
 .emoji-reactions { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin: 2.5rem 0 1rem; }
@@ -513,8 +457,8 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
 
 /* ── REACTION BUTTON ── */
 .reaction-wrap { display: flex; justify-content: center; margin: 2.5rem 0 1rem; }
-.reaction-btn { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1px solid rgba(26, 24, 20, 0.15); border-radius: 40px; padding: 10px 22px; cursor: pointer; font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.78rem; color: #8a7e6e; letter-spacing: 0.02em; transition: border-color 0.2s, color 0.2s; }
-.reaction-btn:hover { border-color: #c0392b; color: #c0392b; }
+.reaction-btn { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1px solid rgba(26, 24, 20, 0.35); border-radius: 40px; padding: 10px 22px; cursor: pointer; font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.78rem; color: #3a3530; letter-spacing: 0.02em; font-weight: 500; transition: border-color 0.2s, color 0.2s, background 0.2s; }
+.reaction-btn:hover { border-color: #c0392b; color: #c0392b; background: rgba(192, 57, 43, 0.05); }
 .reaction-btn.liked { border-color: #c0392b; color: #c0392b; }
 .heart-icon { transition: fill 0.2s ease, stroke 0.2s ease, transform 0.2s ease; flex-shrink: 0; }
 .reaction-btn.liked .heart-icon { fill: #c0392b; stroke: #c0392b; }
@@ -531,8 +475,16 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
 .sticky-note-area::placeholder { color: rgba(26, 24, 20, 0.35); font-style: italic; }
 .sticky-note-footer { display: flex; justify-content: space-between; align-items: center; padding: 4px 12px 10px; border-top: 1px solid rgba(251, 191, 36, 0.3); }
 .sticky-note-count { font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.6rem; color: rgba(26, 24, 20, 0.4); }
+.sticky-note-actions { display: flex; gap: 8px; align-items: center; }
 .sticky-note-clear { background: none; border: none; font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.6rem; color: rgba(26, 24, 20, 0.4); cursor: pointer; padding: 0; letter-spacing: 0.05em; transition: color 0.15s; }
 .sticky-note-clear:hover { color: #c0392b; }
+.sticky-note-send { background: #1a1816; border: none; color: #e0d5c0; font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.6rem; letter-spacing: 0.1em; padding: 3px 10px; border-radius: 20px; cursor: pointer; transition: background 0.15s, opacity 0.15s; }
+.sticky-note-send:hover { background: #4a6fa5; }
+.sticky-note-send:disabled { opacity: 0.5; cursor: default; }
+.sticky-note-update { background: transparent; border: 1px solid #4a6fa5; color: #4a6fa5; font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.6rem; letter-spacing: 0.1em; padding: 3px 10px; border-radius: 20px; cursor: pointer; transition: background 0.15s, color 0.15s, opacity 0.15s; }
+.sticky-note-update:hover { background: #4a6fa5; color: #fff; }
+.sticky-note-update:disabled { opacity: 0.5; cursor: default; }
+.sticky-note-status { font-family: 'Libre Baskerville', Georgia, serif; font-size: 0.62rem; font-style: italic; color: #7a9e7e; padding: 0 12px 8px; min-height: 1rem; }
 
 /* ════════════════════════════════════════
    BREAKPOINTS
@@ -572,7 +524,6 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
     .stories-page { padding: 90px 16px 40px; }
     .stories-header h1 { font-size: 2rem; }
     .text-layer { padding: 3.5rem 1.5rem 3rem; }
-    .slideshow-layer { height: 55vw; min-height: 240px; }
     .reading-entry { grid-template-columns: 72px 1fr; gap: 1.1rem; padding: 1.3rem 0; }
     .entry-thumbnail { width: 72px; height: 52px; }
     .entry-arrow { display: none; }
@@ -581,11 +532,10 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
     .footer-quote-block { border-left: none; border-top: 1px solid rgba(74,111,165,0.15); padding-left: 0; padding-top: 24px; }
     .footer-bottom { padding-right: 0; flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
     .back-to-top { margin-right: 0; }
-    .about-page { padding: 60px 16px 60px; }
+    .about-page { padding: 60px 16px; }
     .writer-banner { padding: 40px 16px 36px; margin-bottom: 40px; }
     .writer-banner h1 { font-size: 2rem; }
     .writer-photo { width: 104px; height: 104px; margin-bottom: 20px; }
-    .writer-photo-placeholder { font-size: 2.1rem; }
     .about-pull-quote { padding: 32px 16px; margin-bottom: 40px; }
     .about-pull-quote blockquote { font-size: 1.15rem; }
     .about-chapter { grid-template-columns: 1fr; gap: 8px; margin-bottom: 48px; }
@@ -605,13 +555,14 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
     .related-grid { grid-template-columns: 1fr; }
     .related-section { padding: 2rem 0 1.5rem; }
     .sticky-note-wrap { justify-content: center; }
-    .sticky-note { width: 100%; transform: rotate(0deg); }
+    .sticky-note { width: 100%; transform: rotate(0deg); box-shadow: 2px 2px 6px rgba(0,0,0,0.1); }
     .sticky-note:focus-within { transform: none; }
     .emoji-reactions-row { gap: 8px; }
     .emoji-btn { padding: 8px 10px; min-width: 52px; }
     .emoji-symbol { font-size: 1.2rem; }
     .blogs-grid { grid-template-columns: 1fr; gap: 20px; }
     .blog-card-image { height: 160px; }
+    .poem-display, .story-card, .blog-post, .blog-card, .related-card { box-shadow: none; }
 }
 
 @media (max-width: 380px) {
@@ -625,393 +576,4 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
 
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
-}
-
-/* ── STICKY NOTE — SEND BUTTON & STATUS ── */
-.sticky-note-actions {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-.sticky-note-send {
-    background: #1a1816;
-    border: none;
-    color: #e0d5c0;
-    font-family: 'Libre Baskerville', Georgia, serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    padding: 3px 10px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background 0.15s, opacity 0.15s;
-}
-.sticky-note-send:hover { background: #4a6fa5; }
-.sticky-note-send:disabled { opacity: 0.5; cursor: default; }
-.sticky-note-status {
-    font-family: 'Libre Baskerville', Georgia, serif;
-    font-size: 0.62rem;
-    font-style: italic;
-    color: #7a9e7e;
-    padding: 0 12px 8px;
-    min-height: 1rem;
-}
-
-/* ── REACTION BUTTON — VISIBILITY FIX ── */
-.reaction-btn {
-    border-color: rgba(26, 24, 20, 0.35) !important;
-    color: #3a3530 !important;
-}
-.reaction-btn:hover {
-    border-color: #c0392b !important;
-    color: #c0392b !important;
-    background: rgba(192, 57, 43, 0.05) !important;
-}
-.reaction-btn.liked {
-    border-color: #c0392b !important;
-    color: #c0392b !important;
-}
-.reaction-label {
-    font-weight: 500;
-}
-
-/* ── ABOUT PAGE — BLUE VISIBILITY FIX ── */
-/* Numbers */
-.about-chapter-number { color: rgba(74, 111, 165, 0.45); }
-.about-stat-value { color: #4a6fa5; font-weight: 400; }
-
-/* Labels */
-.about-chapter-label { color: #3d5d8a; font-weight: 500; }
-.about-philosophy-block .philosophy-word { color: #7aa3d4; }
-.writer-banner-label { color: #3d5d8a; font-weight: 500; }
-.footer-nav-group h4 { color: #3d5d8a; }
-.about-pull-quote cite { color: #3d5d8a; }
-.about-stat-label { color: #5a4a3a; }
-
-/* Divider lines */
-.about-pull-quote { border: none; }
-.writer-banner { border-bottom-color: rgba(74, 111, 165, 0.3); }
-.about-philosophy-block { border: 1px solid rgba(74, 111, 165, 0.2); }
-.about-stats { border-color: rgba(74, 111, 165, 0.3); }
-.about-stat { border-right-color: rgba(74, 111, 165, 0.25); }
-.about-closing { border-top-color: rgba(74, 111, 165, 0.3); }
-.footer-quote-block { border-left-color: rgba(74, 111, 165, 0.5); }
-
-/* ── FEATURED IMAGE — NO ZOOM ON WIDE SCREENS ── */
-.featured-image img,
-.featured-image astro-island img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 12px;
-    object-fit: contain;  /* contain instead of cover — no cropping */
-    max-height: 600px;    /* cap height so portrait images don't go too tall */
-}
-
-/* Story/blog card images keep cover since they're thumbnails */
-.story-image img,
-.related-image,
-.blog-card-img,
-.entry-thumbnail {
-    object-fit: cover;
-}
-
-/* ── SLIDESHOW — NATURAL ASPECT RATIO ── */
-/* Removes fixed height so images show fully at their natural proportions */
-.slideshow-layer {
-    height: auto !important;
-    min-height: unset !important;
-}
-.hero-slide {
-    position: relative !important;
-    inset: unset !important;
-    width: 100% !important;
-    height: auto !important;
-    display: block;
-    opacity: 1 !important;
-    filter: grayscale(20%) brightness(0.88);
-    transition: opacity 1.6s ease;
-}
-/* Stack slides on top of each other using grid */
-.slideshow-layer {
-    display: grid !important;
-}
-.slideshow-layer > * {
-    grid-area: 1 / 1;
-}
-.hero-slide:not(.active) {
-    opacity: 0 !important;
-}
-.hero-slide.active {
-    opacity: 1 !important;
-}
-/* Fade still fades into reading section */
-.slideshow-fade {
-    grid-area: 1 / 1;
-    align-self: end;
-    position: relative !important;
-    height: 120px;
-    z-index: 1;
-}
-
-/* ── STICKY NOTE UPDATE BUTTON ── */
-.sticky-note-update {
-    background: #4a6fa5;
-    border: none;
-    color: #fff;
-    font-family: 'Libre Baskerville', Georgia, serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    padding: 3px 10px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background 0.15s, opacity 0.15s;
-}
-.sticky-note-update:hover { background: #3d5d8a; }
-.sticky-note-update:disabled { opacity: 0.5; cursor: default; }
-
-/* ── STICKY NOTE UPDATE BUTTON ── */
-.sticky-note-update {
-    background: transparent;
-    border: 1px solid #4a6fa5;
-    color: #4a6fa5;
-    font-family: 'Libre Baskerville', Georgia, serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    padding: 3px 10px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s, opacity 0.15s;
-}
-.sticky-note-update:hover { background: #4a6fa5; color: #fff; }
-.sticky-note-update:disabled { opacity: 0.5; cursor: default; }
-
-/* ── COMMENT FORM ── */
-.comment-form { display: flex; flex-direction: column; gap: 12px; }
-.comment-fields { display: flex; flex-direction: column; gap: 10px; }
-.comment-input,
-.comment-textarea {
-    font-family: 'Libre Baskerville', Georgia, serif;
-    font-size: 0.85rem;
-    color: #1a1814;
-    background: #faf8f5;
-    border: 1px solid rgba(26, 24, 20, 0.18);
-    border-radius: 10px;
-    padding: 12px 16px;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    width: 100%;
-    line-height: 1.65;
-}
-.comment-textarea { resize: vertical; min-height: 110px; font-style: italic; }
-.comment-input::placeholder,
-.comment-textarea::placeholder { color: rgba(26, 24, 20, 0.35); font-style: italic; }
-.comment-input:focus,
-.comment-textarea:focus {
-    border-color: #4a6fa5;
-    box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.08);
-    background: #fff;
-}
-.comment-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.comment-char-count {
-    font-family: 'Libre Baskerville', Georgia, serif;
-    font-size: 0.62rem;
-    color: rgba(26, 24, 20, 0.38);
-}
-.comment-submit {
-    background: #1a1816;
-    border: none;
-    color: #e0d5c0;
-    font-family: 'Libre Baskerville', Georgia, serif;
-    font-size: 0.78rem;
-    letter-spacing: 0.08em;
-    padding: 10px 26px;
-    border-radius: 40px;
-    cursor: pointer;
-    transition: background 0.2s, opacity 0.2s;
-}
-.comment-submit:hover { background: #4a6fa5; }
-.comment-submit:disabled { opacity: 0.5; cursor: default; }
-.comment-status {
-    font-family: 'Libre Baskerville', Georgia, serif;
-    font-size: 0.72rem;
-    font-style: italic;
-    color: #7a9e7e;
-    min-height: 1rem;
-}
-
-/* ── QUOTE SLIDESHOW — 8 SECOND TIMING ── */
-/* The JS interval is in main.js — search for the quote slideshow setInterval
-   and change the millisecond value to 8000 */
-.quote-slide {
-    transition: opacity 1.5s ease-in-out;
-}
-
-/* ── WHITE COVER FIX ON MOBILE ── */
-/* The white flash/cover on blog and story pages on mobile is caused by
-   body background not covering fully or a pseudo-element interfering */
-body {
-    background-color: #1a1816; /* solid fallback so no white shows through */
-}
-body::before {
-    display: none; /* remove the pseudo overlay entirely */
-}
-
-/* Ensure blog/story pages have a solid background */
-.blog-fullscreen {
-    background: transparent;
-    position: relative;
-    z-index: 1;
-}
-
-/* ── HOME PAGE SECTIONS — SOLID BACKGROUNDS ── */
-/* Prevent site background from bleeding through home page layers */
-.text-layer {
-    background: #0c0b0a;
-    position: relative;
-    z-index: 1;
-}
-.slideshow-layer {
-    background: #0c0b0a;
-    position: relative;
-    z-index: 1;
-}
-.reading-section {
-    background: #0c0b0a;
-    position: relative;
-    z-index: 1;
-}
-.subscribe-section {
-    background: #0c0b0a;
-    position: relative;
-    z-index: 1;
-}
-
-/* ── FAST SCROLL PAINT FIX ── */
-/* Prevents background bleed when scrolling quickly */
-html {
-    background-color: #0c0b0a;
-}
-
-/* Force GPU compositing on home sections so they paint before scroll reaches them */
-.text-layer,
-.slideshow-layer,
-.reading-section,
-.subscribe-section {
-    will-change: transform;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-}
-
-/* Ensure the main element has a solid background on all pages */
-body > #main-content {
-    background-color: #1a1816;
-    min-height: 100vh;
-}
-
-/* Blog and story pages specifically */
-.blog-fullscreen {
-    background-color: transparent;
-}
-
-/* Remove any gaps between home sections */
-.text-layer,
-.slideshow-layer,
-.reading-section,
-.subscribe-section {
-    margin: 0;
-    padding-left: 0;
-    padding-right: 0;
-}
-
-/* ── SCROLL LAG FIX — REMOVE AGGRESSIVE GPU COMPOSITING ── */
-.text-layer,
-.slideshow-layer,
-.reading-section,
-.subscribe-section {
-    will-change: auto;
-    transform: none;
-    backface-visibility: visible;
-}
-
-/* ── CONTENT PAGES — RESTORE LIGHT BACKGROUND ── */
-/* Blog, story, poem pages sit on the site's background image, not the dark home */
-body > #main-content {
-    background-color: transparent;
-}
-
-/* Poem card stays white */
-.poem-display {
-    background: #ffffff;
-}
-
-/* Blog and story content stays readable */
-.blog-fullscreen {
-    background: transparent;
-}
-
-/* Story and blog cards stay white */
-.story-card,
-.blog-post,
-.blog-card {
-    background: #ffffff;
-}
-
-/* ── HOME PAGE — ONLY DARKEN HOME SECTIONS ── */
-/* Target only the home page dark sections specifically */
-.text-layer {
-    background: #0c0b0a !important;
-}
-.reading-section {
-    background: #0c0b0a !important;
-}
-.subscribe-section {
-    background: #0c0b0a !important;
-}
-
-/* Html background — neutral dark so gaps aren't white but don't affect content */
-html {
-    background-color: #1a1816;
-}
-body {
-    background-color: transparent;
-}
-
-
-/* ── MOBILE SCROLL PERFORMANCE ── */
-/* background-attachment: fixed kills scroll performance on ALL mobile browsers
-   not just iOS — disable it below 1024px where it's never needed anyway */
-@media (max-width: 1024px) {
-    body {
-        background-attachment: scroll;
-    }
-}
-
-/* Reduce box shadow complexity on mobile — shadows are expensive to repaint */
-@media (max-width: 700px) {
-    .poem-display,
-    .story-card,
-    .blog-post,
-    .blog-card,
-    .related-card {
-        box-shadow: none;
-    }
-    .share-panel {
-        box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
-    }
-    /* Sticky note shadow simplified */
-    .sticky-note {
-        box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
-    }
-}
-
-/* Smooth scrolling only on devices that can handle it */
-@media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
-    html { scroll-behavior: smooth; }
-}
-@media (max-width: 1024px) {
-    html { scroll-behavior: auto; }
 }
