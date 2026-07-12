@@ -926,3 +926,56 @@ body > #main-content {
     padding-left: 0;
     padding-right: 0;
 }
+
+/* ── SCROLL LAG FIX — REMOVE AGGRESSIVE GPU COMPOSITING ── */
+.text-layer,
+.slideshow-layer,
+.reading-section,
+.subscribe-section {
+    will-change: auto;
+    transform: none;
+    backface-visibility: visible;
+}
+
+/* ── CONTENT PAGES — RESTORE LIGHT BACKGROUND ── */
+/* Blog, story, poem pages sit on the site's background image, not the dark home */
+body > #main-content {
+    background-color: transparent;
+}
+
+/* Poem card stays white */
+.poem-display {
+    background: #ffffff;
+}
+
+/* Blog and story content stays readable */
+.blog-fullscreen {
+    background: transparent;
+}
+
+/* Story and blog cards stay white */
+.story-card,
+.blog-post,
+.blog-card {
+    background: #ffffff;
+}
+
+/* ── HOME PAGE — ONLY DARKEN HOME SECTIONS ── */
+/* Target only the home page dark sections specifically */
+.text-layer {
+    background: #0c0b0a !important;
+}
+.reading-section {
+    background: #0c0b0a !important;
+}
+.subscribe-section {
+    background: #0c0b0a !important;
+}
+
+/* Html background — neutral dark so gaps aren't white but don't affect content */
+html {
+    background-color: #1a1816;
+}
+body {
+    background-color: transparent;
+}
