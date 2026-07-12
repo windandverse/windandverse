@@ -578,3 +578,16 @@ footer { isolation: isolate; background: #1a1816; border-top: 1px solid rgba(74,
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
 }
+
+/* ── READING LIST SCROLL FRICTION FIX ── */
+.reading-entry {
+    transition: none;
+}
+.reading-entry:hover {
+    opacity: 0.65;
+    transition: opacity 0.2s ease;
+}
+.reading-entry:hover .entry-arrow {
+    transform: translateX(4px);
+    transition: transform 0.2s ease;
+}
