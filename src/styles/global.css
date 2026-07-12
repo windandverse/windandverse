@@ -979,3 +979,39 @@ html {
 body {
     background-color: transparent;
 }
+
+
+/* ── MOBILE SCROLL PERFORMANCE ── */
+/* background-attachment: fixed kills scroll performance on ALL mobile browsers
+   not just iOS — disable it below 1024px where it's never needed anyway */
+@media (max-width: 1024px) {
+    body {
+        background-attachment: scroll;
+    }
+}
+
+/* Reduce box shadow complexity on mobile — shadows are expensive to repaint */
+@media (max-width: 700px) {
+    .poem-display,
+    .story-card,
+    .blog-post,
+    .blog-card,
+    .related-card {
+        box-shadow: none;
+    }
+    .share-panel {
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+    }
+    /* Sticky note shadow simplified */
+    .sticky-note {
+        box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+    }
+}
+
+/* Smooth scrolling only on devices that can handle it */
+@media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+    html { scroll-behavior: smooth; }
+}
+@media (max-width: 1024px) {
+    html { scroll-behavior: auto; }
+}
