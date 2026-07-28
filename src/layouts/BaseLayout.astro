@@ -1,7 +1,8 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import '../styles/global.css'; 
-import backgroundImage from '../assets/home/ricardo-gomez-angel-jg4pkrwaico-unsplash.jpg'; 
+import backgroundImageLight from '../assets/home/ricardo-gomez-angel-jg4pkrwaico-unsplash.jpg';
+import backgroundImageDark  from '../assets/home/chiranjeeb-mitra-8jcgjQIttF8-unsplash.jpg';
 
 const { 
     title, 
@@ -22,18 +23,13 @@ const routePrefix = collectionType === 'POEMS' ? 'poem' :
 
 <head>
     <BaseHead title={title} description={description} ogImage={ogImage} />
-    <!-- Preload background image so it's ready before paint -->
-    <link rel="preload" as="image" href={backgroundImage.src} />
-    <style>
-        /* Inline critical CSS — applies before external stylesheet loads */
-        html { background-color: #1a1816; }
-        body.site-bg {
-            background-image: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url('{BG_SRC}');
-        }
-    </style>
+    <link rel="preload" as="image" href={backgroundImageLight.src} />
+    <link rel="preload" as="image" href={backgroundImageDark.src} />
+    <style>html { background-color: #1a1816; }</style>
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
 </head>
 
-<body class="site-bg" id="site-body">
+<body id="site-body">
 
     <a href="#main-content" class="skip-to-content">Skip to content</a>
 
@@ -64,6 +60,31 @@ const routePrefix = collectionType === 'POEMS' ? 'poem' :
                 <li><a href="/about">About</a></li>
             </ul>
         </nav>
+
+        <button class="search-toggle" id="searchToggle" aria-label="Search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+        </button>
+
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+        </button>
+
         <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="3" y1="7" x2="21" y2="7"></line>
@@ -72,6 +93,12 @@ const routePrefix = collectionType === 'POEMS' ? 'poem' :
             </svg>
         </button>
     </header>
+
+    <div class="search-overlay" id="searchOverlay">
+        <div class="search-box">
+            <div id="search"></div>
+        </div>
+    </div>
 
     <div class="nav-overlay" id="navOverlay"></div>
     <aside class="mobile-nav-sidebar" id="mobileSidebar">
@@ -184,10 +211,90 @@ const routePrefix = collectionType === 'POEMS' ? 'poem' :
         </div>
     </footer>
 
-    <!-- Set background image via JS after page load to avoid render blocking -->
-    <script define:vars={{ bgSrc: backgroundImage.src }}>
-        document.getElementById('site-body').style.backgroundImage = 
-            `linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url(${bgSrc})`;
+    <!-- Theme + background init — runs before paint -->
+    <script define:vars={{ lightBg: backgroundImageLight.src, darkBg: backgroundImageDark.src }}>
+        (function () {
+            const html   = document.documentElement;
+            const body   = document.getElementById('site-body');
+            const stored = localStorage.getItem('wv-theme');
+            const system = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            const theme  = stored ?? system;
+
+            if (theme === 'dark') html.setAttribute('data-theme', 'dark');
+
+            // Set background image based on theme
+            function applyBg(t) {
+                const img = t === 'dark' ? darkBg : lightBg;
+                const overlay = t === 'dark'
+                    ? 'rgba(0,0,0,0.55)'
+                    : 'rgba(255,255,255,0.15)';
+                if (body) {
+                    body.style.backgroundImage    = `linear-gradient(${overlay}, ${overlay}), url(${img})`;
+                    body.style.backgroundSize     = 'cover';
+                    body.style.backgroundPosition = 'center';
+                    body.style.backgroundRepeat   = 'no-repeat';
+                    body.style.backgroundAttachment = window.innerWidth > 1024 ? 'fixed' : 'scroll';
+                }
+            }
+
+            applyBg(theme);
+
+            // Theme toggle
+            document.getElementById('themeToggle')?.addEventListener('click', () => {
+                const isDark = html.getAttribute('data-theme') === 'dark';
+                const next   = isDark ? 'light' : 'dark';
+                if (isDark) html.removeAttribute('data-theme');
+                else html.setAttribute('data-theme', 'dark');
+                localStorage.setItem('wv-theme', next);
+                applyBg(next);
+            });
+
+            // Follow system if no manual override
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (!localStorage.getItem('wv-theme')) {
+                    const next = e.matches ? 'dark' : 'light';
+                    if (e.matches) html.setAttribute('data-theme', 'dark');
+                    else html.removeAttribute('data-theme');
+                    applyBg(next);
+                }
+            });
+        })();
+    </script>
+
+    <!-- Search -->
+    <script>
+        const searchToggle  = document.getElementById('searchToggle');
+        const searchOverlay = document.getElementById('searchOverlay');
+        let pagefindLoaded  = false;
+
+        async function openSearch() {
+            searchOverlay?.classList.add('open');
+            if (!pagefindLoaded) {
+                pagefindLoaded = true;
+                try {
+                    const { PagefindUI } = await import('/pagefind/pagefind-ui.js');
+                    new PagefindUI({
+                        element: '#search',
+                        showImages: false,
+                        excerptLength: 15,
+                        resetStyles: false,
+                    });
+                } catch {
+                    const el = document.getElementById('search');
+                    if (el) el.innerHTML = '<p style="color:#b8a99a;font-size:0.85rem;padding:12px;">Search unavailable in dev mode — run npm run build first.</p>';
+                }
+            }
+            setTimeout(() => searchOverlay?.querySelector('input')?.focus(), 100);
+        }
+
+        searchToggle?.addEventListener('click', openSearch);
+        searchOverlay?.addEventListener('click', e => {
+            if (e.target === searchOverlay) searchOverlay.classList.remove('open');
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') searchOverlay?.classList.remove('open');
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+        });
     </script>
 
     <script type="module">
