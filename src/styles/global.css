@@ -89,11 +89,11 @@ header {
 
 @media (max-width: 1000px) {
     .logo { font-size: 15px; letter-spacing: 2px; order: 1; flex: 0 0 auto; }
-    .logo-icon { width: 30px; height: 30px; }
+    .logo-icon { width: 50px; height: 50px; }
 }
 @media (max-width: 380px) {
     .logo { font-size: 13px; letter-spacing: 1px; gap: 7px; }
-    .logo-icon { width: 26px; height: 26px; }
+    .logo-icon { width: 40px; height: 40px; }
 }
 
 .quote-slideshow { flex: 0 1 500px; min-width: 0; max-width: 500px; }
@@ -567,7 +567,7 @@ footer { background: #1a1816; border-top: 1px solid rgba(74,111,165,0.2); paddin
 
 @media (max-width: 380px) {
     .logo { font-size: 13px; letter-spacing: 1px; gap: 7px; }
-    .logo-icon { width: 26px; height: 26px; }
+    .logo-icon { width: 40px; height: 40px; }
     .collection-btn-label { display: none; }
     .collection-btn { padding: 12px; border-radius: 50%; }
     .share-social-grid { grid-template-columns: repeat(2, 1fr); }
@@ -689,8 +689,8 @@ footer                  { background: var(--bg-header); }
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
     background: transparent;
     border: 1px solid rgba(224,213,192,0.25);
     border-radius: 50%;
@@ -710,8 +710,8 @@ footer                  { background: var(--bg-header); }
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
     background: transparent;
     border: 1px solid rgba(224,213,192,0.25);
     border-radius: 50%;
@@ -961,3 +961,19 @@ footer                  { background: var(--bg-header); }
 /* Nav links in dark */
 [data-theme="dark"] .footer-nav-group a { color: #b8a99a; }
 [data-theme="dark"] .footer-nav-group a:hover { color: #c4a882; }
+
+/* ── MOBILE HEADER ORDER ── */
+@media (max-width: 1000px) {
+    .theme-toggle  { order: 1; }
+    .logo          { order: 2; flex: 0 0 auto; }
+    .hamburger-btn { order: 3; }
+    .search-toggle { order: 4; }
+    .quote-slideshow { order: 5; flex: 1 1 100%; }
+}
+
+/* ── SHARE BUTTON — RESET ON DESELECT ── */
+.share-btn:not(.active) {
+    background: transparent !important;
+    color: #4a6fa5 !important;
+    border-color: rgba(74,111,165,0.4) !important;
+}

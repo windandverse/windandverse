@@ -2,7 +2,11 @@
   command = "npm run build"
   publish = "dist"
 
+[build.environment]
+  NODE_VERSION = "20"
+
 [[headers]]
   for = "/pagefind/*"
   [headers.values]
     Cache-Control = "public, max-age=3600"
+    Access-Control-Allow-Origin = "*"
