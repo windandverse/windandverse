@@ -127,13 +127,17 @@ async function fetchData(url) {
         if (btn) btn.setAttribute('aria-expanded', 'false');
     }
 
-   // Unified Global Listener
+// Unified Global Listener
 document.addEventListener('click', (e) => {
+    // Let search and theme toggle handle their own clicks
+    if (e.target.closest('#searchToggle') || 
+        e.target.closest('#themeToggle') ||
+        e.target.closest('#searchOverlay')) {
+        return;
+    }
+
     // 1. Sidebar Logic (Unified)
     const collectionBtn = e.target.closest('#collectionBtn');
-    // FIX: the real close button's id is "closeSidebar" (see BaseLayout.astro),
-    // not "closeSidebarBtn". This mismatch was why the close (×) button did
-    // nothing even once the sidebar markup existed.
     const closeSidebarBtn = e.target.closest('#closeSidebar');
     const sidebar = document.getElementById('collectionSidebar');
 
@@ -146,12 +150,11 @@ document.addEventListener('click', (e) => {
         closeCollectionSidebar();
     }
 
-    // Sidebar Close-on-outside-click
     if (sidebar && sidebar.classList.contains('open') && !sidebar.contains(e.target) && !e.target.closest('#collectionBtn')) {
         closeCollectionSidebar();
     }
 
-    // 2. Your Existing Share/Poem Logic (Keep this)
+    // 2. Your Existing Share/Poem Logic
     delegateShareClick(e);
 });
 
