@@ -273,7 +273,8 @@ const routePrefix = collectionType === 'POEMS' ? 'poem' :
         pagefindLoaded = true;
         try {
             await new Promise(resolve => setTimeout(resolve, 50));
-            const { PagefindUI } = await import('/pagefind/pagefind-ui.js');
+            const pagefindModule = await import('/pagefind/pagefind-ui.js');
+            const PagefindUI = pagefindModule.PagefindUI ?? pagefindModule.default?.PagefindUI ?? pagefindModule.default;
             new PagefindUI({
                 element: '#search',
                 showImages: false,
