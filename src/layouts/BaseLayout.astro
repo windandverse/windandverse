@@ -267,25 +267,27 @@ const routePrefix = collectionType === 'POEMS' ? 'poem' :
         const searchOverlay = document.getElementById('searchOverlay');
         let pagefindLoaded  = false;
 
-        async function openSearch() {
-            searchOverlay?.classList.add('open');
-            if (!pagefindLoaded) {
-                pagefindLoaded = true;
-                try {
-                    const { PagefindUI } = await import('/pagefind/pagefind-ui.js');
-                    new PagefindUI({
-                        element: '#search',
-                        showImages: false,
-                        excerptLength: 15,
-                        resetStyles: false,
-                    });
-                } catch {
-                    const el = document.getElementById('search');
-                    if (el) el.innerHTML = '<p style="color:#b8a99a;font-size:0.85rem;padding:12px;">Search unavailable in dev mode — run npm run build first.</p>';
-                }
-            }
-            setTimeout(() => searchOverlay?.querySelector('input')?.focus(), 100);
+    async function openSearch() {
+    searchOverlay?.classList.add('open');
+    if (!pagefindLoaded) {
+        pagefindLoaded = true;
+        try {
+            await new Promise(resolve => setTimeout(resolve, 50));
+            const { PagefindUI } = await import('/pagefind/pagefind-ui.js');
+            new PagefindUI({
+                element: '#search',
+                showImages: false,
+                excerptLength: 15,
+                resetStyles: false,
+            });
+        } catch (err) {
+            console.error('Pagefind error:', err);
+            const el = document.getElementById('search');
+            if (el) el.innerHTML = '<p style="color:#b8a99a;font-size:0.85rem;padding:12px;">Search unavailable in dev mode — run npm run build first.</p>';
         }
+    }
+    setTimeout(() => searchOverlay?.querySelector('input')?.focus(), 300);
+}
 
         searchToggle?.addEventListener('click', openSearch);
         searchOverlay?.addEventListener('click', e => {
